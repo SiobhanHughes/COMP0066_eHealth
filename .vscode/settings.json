@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/Users/Siobhan/anaconda3/envs/eHealth/bin/python"
+    "python.pythonPath": "/Users/Siobhan/anaconda3/envs/eHealth/bin/python",
+    "python.linting.pylintPath": "/Users/Siobhan/anaconda3/envs/eHealth/bin/pylint"
 }
