@@ -2,7 +2,8 @@
 
 import sqlite3
 from sqlite3 import Error
- 
+import db_path
+
  
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
@@ -17,7 +18,8 @@ def create_connection(db_file):
  
  
 if __name__ == '__main__':
-    conn = create_connection(r"eHealth.db")
+    db_file = db_path.database_path
+    conn = create_connection("db_file")
     print(conn)
     print("sqlite version", sqlite3.sqlite_version)
     if conn is not None:

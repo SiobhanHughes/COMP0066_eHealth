@@ -1,9 +1,10 @@
 #https://www.sqlitetutorial.net/sqlite-python/create-tables/
 
 import connect
+import db_path
 import sqlite3
 from sqlite3 import Error
- 
+
 
 def create_table(conn, create_table_sql):
     """ create a table from the create_table_sql statement
@@ -31,7 +32,7 @@ def create_admin(conn, admin):
         print(e)
  
 def main():
-    database = r"eHealth.db"
+    database = db_path.database_path
  
     create_admin_table = """ CREATE TABLE IF NOT EXISTS Admin (
                                     administrator text NOT NULL,
