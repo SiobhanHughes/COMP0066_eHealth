@@ -1,9 +1,9 @@
 #https://www.sqlitetutorial.net/sqlite-python/create-tables/
 
-import connect
-import db_path
 import sqlite3
 from sqlite3 import Error
+import connect
+import db_path
 
 
 def create_table(conn, create_table_sql):

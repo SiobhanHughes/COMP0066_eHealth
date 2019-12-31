@@ -1,19 +1,13 @@
-import os.path
-import sys, inspect
+import os
+import sys
+import inspect
 import pkgutil
+import get_path
 
-package_dir = os.path.realpath(os.path.dirname(inspect.getfile(inspect.currentframe())))
-#os.path.abspath(os.path.dirname(__file__))
-database_path = os.path.join(package_dir, 'eHealth.db')
+current = get_path.get_current_dir()
+package_dir = get_path.getDir(current, 2)
+database_path = os.path.join(package_dir, 'data/eHealth.db')
 
 
 if __name__ == '__main__':
     print("DB file path:", database_path)
-    print(sys.path)
-    print(' ')
-    
-
-    search_path = ['.'] # set to None to see all modules importable from sys.path
-    all_modules = [x[1] for x in pkgutil.iter_modules(path=search_path)]
-    print("Modules in search path to import")
-    print(all_modules)
