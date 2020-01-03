@@ -17,4 +17,6 @@ CREATE eHealth database with default admin to start application the very first t
  - Admin table only ever has one row (store username: 'admin' and passwd)
  - The very first time the admin logs in to the eHealth application, they will be asked to change the password to somthing more secure
  - Admin table is only used to confirm the log in of the admin (no other access or update to the table when running the application)
+
+ 3. populate.py (File path: SHughes_eHealth/eHealth/src/database/populate.py). Running this file will autopopulate the GPs and Patients tables with 2 GPs and 2 patients. GPs and patients are added to the system by the admin, so they have no passwords until they create an acount on the system. This file allows testing and development of the login/create account features. 
  

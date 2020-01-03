@@ -1,4 +1,5 @@
-#https://www.sqlitetutorial.net/sqlite-python/create-tables/
+# How to create the database with all the relevant tables using sqlite3 and python taken from this tutorial: 
+# https://www.sqlitetutorial.net/sqlite-python/create-tables/
 
 import sqlite3
 from sqlite3 import Error
@@ -23,7 +24,7 @@ def create_admin(conn, admin):
     :param conn: Connection object
     :param admin: details to be inserted into Admin table """
     
-    sql = """ INSERT INTO Admin (administrator, passwd) VALUES (? , ?); """
+    sql = """ INSERT INTO Admin (administrator, passwd) VALUES (? , ?) """
     
     try:
         c = conn.cursor()
@@ -52,6 +53,7 @@ def main():
                                     city text NOT NULL,
                                     postcode text NOT NULL,
                                     tel text NOT NULL,
+                                    begin_date text NOT NULL,
                                     active text DEFAULT "yes" NOT NULL,
                                     isLoggedIn test Default "no" NOT NULL
                                 );"""
@@ -66,6 +68,7 @@ def main():
                                     city text NOT NULL,
                                     postcode text NOT NULL,
                                     tel text NOT NULL,
+                                    begin_date text NOT NULL,
                                     contact_fname text NOT NULL,
                                     contact_lname text NOT NULL,
                                     contact_email text NOT NULL,
@@ -73,15 +76,16 @@ def main():
                                     contact_city text NOT NULL,
                                     contact_postcode text NOT NULL,
                                     contact_tel text NOT NULL,
+                                    contact_relationship text NOT NULL,
                                     active text DEFAULT "yes" NOT NULL,
-                                    isLoggedIn test Default "no" NOT NULL
+                                    isLoggedIn text Default "no" NOT NULL
                                 );"""
     
     create_patient_record_table = """CREATE TABLE IF NOT EXISTS Patient_Record (
                                     NHSno text NOT NULL PRIMARY KEY,
                                     patientid integer NOT NULL,
                                     DOB text NOT NULL,
-                                    allergies text NOT NULL,
+                                    drug_allergies text NOT NULL,
                                     medical_conditions text NOT NULL,
                                     disabilities text NOT NULL,
                                     smoker text NOT NULL,
@@ -129,10 +133,10 @@ def main():
                                 );"""
                                 
     create_appointments_table = """CREATE TABLE IF NOT EXISTS Appointments (
-                                    patientid integer,
                                     gpid integer NOT NULL,
                                     date text NOT NULL,
                                     time text NOT NULL,
+                                    patientid integer NULL,
                                     available text DEFAULT "yes" NOT NULL,
                                     FOREIGN KEY (patientid) REFERENCES Patients (id),
                                     FOREIGN KEY (gpid) REFERENCES GPs (id),
@@ -173,7 +177,7 @@ def main():
         # create apointments table
         create_table(conn, create_appointments_table)
         
-        #save changes
+        #commit changes
         conn.commit()
     else:
         print("Error! cannot create the database connection.")
