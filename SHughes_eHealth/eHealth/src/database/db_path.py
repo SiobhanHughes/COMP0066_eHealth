@@ -2,7 +2,7 @@ import os
 import sys
 import inspect
 import pkgutil
-import get_path
+import get_path_utilities as get_path
 
 current = get_path.get_current_dir()
 package_dir = get_path.getDir(current, 2)

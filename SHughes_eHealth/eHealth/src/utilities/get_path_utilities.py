@@ -23,6 +23,19 @@ def insert_dir(dir_path):
 #delete file path once after imports from eHealth (revert to original file path lists for sys.path)
 def delete_dir():
     del sys.path[0]
+    
+def dataDir_path(file_name):
+    current = get_current_dir()
+    package_dir = getDir(current, 2)
+    data_path = os.path.join(package_dir, 'data/' + file_name)
+    return data_path
+
+def delete_from_dataDir(file_name):
+    file = dataDir_path(file_name)
+    if os.path.exists(file):
+      os.remove(file)
+    else:
+        print("The file does not exist")
 
 if __name__ == '__main__':
     print(sys.path)
@@ -43,3 +56,6 @@ if __name__ == '__main__':
     insert_dir(get_dir_2up)
     print(" ")
     print(sys.path)
+    print(dataDir_path('test.py'))
+    delete_from_dataDir('test.py')
+    
