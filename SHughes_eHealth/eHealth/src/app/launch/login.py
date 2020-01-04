@@ -106,6 +106,13 @@ class Login(tk.Frame):
         top = tk.Toplevel()
         Admin = admin_home.MainView(top)
         Admin.pack(side="top", fill="both", expand=True)
+        width = 800
+        height = 700
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+        x = (screen_width/2) - (width/2)
+        y = (screen_height/2) - (height/2)
+        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
         
     
     def HomeWindow(self): #next window

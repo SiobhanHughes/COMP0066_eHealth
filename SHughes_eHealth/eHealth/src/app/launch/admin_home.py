@@ -82,7 +82,7 @@ class MainView(tk.Frame):
         p1.show()
         
     def logout(self):
-        print('Home window closed')
+        print('User logged out. Widgets destroyed')
         return self.destroy()
 
 def close(*args):
