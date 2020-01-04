@@ -1,4 +1,5 @@
-#============================LAUNCH eHealth Application======================
+#template for tkinter home page taken from:
+#https://stackoverflow.com/questions/14817210/using-buttons-in-tkinter-to-navigate-to-different-pages-of-the-application
 
 #============================IMPORT============================================
 
@@ -24,7 +25,7 @@ from src.utilities import track_user as track
 path.delete_dir()
 
 
-#============================Admin home interface======================
+#============================ADMIN HOME interface======================
 
 class Admin(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -53,6 +54,8 @@ class Admin3(Admin):
 class MainView(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
+        lbl_title = tk.Label(self, text = "Admin: eHealth system", font=('arial', 15))
+        lbl_title.pack(fill=tk.X)
         p1 = Admin1(self)
         p2 = Admin2(self)
         p3 = Admin3(self)
@@ -69,14 +72,20 @@ class MainView(tk.Frame):
         b1 = tk.Button(buttonframe, text="Admin 1", command=p1.lift)
         b2 = tk.Button(buttonframe, text="Admin 2", command=p2.lift)
         b3 = tk.Button(buttonframe, text="Admin 3", command=p3.lift)
+        btn_back = tk.Button(buttonframe, text='logout', command=self.logout)
 
         b1.pack(side="left")
         b2.pack(side="left")
         b3.pack(side="left")
+        btn_back.pack(side="right")
 
         p1.show()
+        
+    def logout(self):
+        print('Home window closed')
+        return self.destroy()
 
-def logout(*args):
+def close(*args):
     print('Window closed. User logged out')
 
 if __name__ == "__main__":
@@ -84,5 +93,5 @@ if __name__ == "__main__":
     main = MainView(root)
     main.pack(side="top", fill="both", expand=True)
     root.wm_geometry("400x400")
-    main.bind('<Destroy>', logout) #bind a function call to when the window is closed/destroyed - logout the user and delete user.pickle
+    main.bind('<Destroy>', close) #bind a function call to when the window is closed/destroyed - logout the user and delete user.pickle
     root.mainloop()

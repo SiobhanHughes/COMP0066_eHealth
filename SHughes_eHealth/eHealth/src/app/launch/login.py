@@ -89,7 +89,7 @@ class Login(tk.Frame):
         else:
             cursor.execute("SELECT * FROM `member` WHERE `email` = ? AND `password` = ?", (self.EMAIL.get(), self.PASSWORD.get())) #.get will get what user enters in the window
             if cursor.fetchone() is not None:
-                self.HomeWindow() #call the next window! This is how you jump around!!
+                self.AdminWindow() #call the next window! This is how you jump around!!
                 self.EMAIL.set("")
                 self.PASSWORD.set("")
                 self.lbl_text.config(text="")
@@ -99,6 +99,14 @@ class Login(tk.Frame):
                 self.PASSWORD.set("")   
         cursor.close()
         conn.close()
+        
+    
+    def AdminWindow(self): #next window
+        global Admin
+        top = tk.Toplevel()
+        Admin = admin_home.MainView(top)
+        Admin.pack(side="top", fill="both", expand=True)
+        
     
     def HomeWindow(self): #next window
         global Home
@@ -119,11 +127,16 @@ class Login(tk.Frame):
     def Back(self):
         Home.destroy()
         self.master.deiconify()
+    
+    @staticmethod   
+    def shutdown(self):
+        print('Application closed')
 
 
 def main():
     root = tk.Tk()
-    root.title("Launch eHealth system")
+    login = Login(root)
+    root.title("Welcome to the eHealth system")
     width = 400
     height = 280
     screen_width = root.winfo_screenwidth()
@@ -132,8 +145,9 @@ def main():
     y = (screen_height/2) - (height/2)
     root.geometry("%dx%d+%d+%d" % (width, height, x, y))
     root.resizable(0, 0)
-    Login(root)
-    root.mainloop()
+    login.bind('<Destroy>', Login.shutdown)
+    root.mainloop() #Starts the event loop for the main window
+    
 
 
 if __name__ == '__main__':
@@ -153,3 +167,4 @@ if __name__ == '__main__':
     path.delete_from_dataDir("user.pickle", 3)
     
     main()
+    
