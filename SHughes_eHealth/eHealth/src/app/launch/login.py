@@ -1,14 +1,40 @@
-#Interface for login
+#============================LAUNCH eHealth Application======================
+
+#Used the following tutorial to help make the login feature
 #https://www.sourcecodester.com/tutorials/python/11351/python-simple-login-application.html
 
+#============================IMPORT============================================
+
 import tkinter as tk
+
+import os
+import sys
+import inspect
+
 import sqlite3
-#the_version = tkinter.TkVersion
+from sqlite3 import Error
+
+import admin_home
+
+# get file path for eHealth directory and add it to sys.path 
+# import my modules
+# delete file path for eHealth directory from sys.path
+import get_path_utilities as path
+current = path.get_current_dir()
+eHealth_dir = path.getDir(current, 3)
+path.insert_dir(eHealth_dir)
+from src.database import db_utilities as dbu
+from src.database import connect
+from src.utilities import track_user as track
+path.delete_dir()
 
 
-class Login:
+#============================Interface for login to open main window======================
+
+class Login(tk.Frame):
     
-    def __init__(self, master):
+    def __init__(self, master, *args, **kwargs):
+        tk.Frame.__init__(self, *args, **kwargs)
         self.master = master
         
         #==============================VARIABLES======================================
@@ -109,5 +135,21 @@ def main():
     Login(root)
     root.mainloop()
 
+
 if __name__ == '__main__':
+    db_file = connect.db_path(3)
+    conn = connect.create_connection(db_file)
+    print(db_file)
+    print(conn)
+    print("sqlite version", sqlite3.sqlite_version)
+    if conn is not None:
+        print("connected")  
+    conn.close()
+
+    emp = {1:"A",2:"B",3:"C",4:"D",5:"E"}
+    track.store(emp, 3)
+    emp = track.load(emp, 3)
+    print(emp)
+    path.delete_from_dataDir("user.pickle", 3)
+    
     main()

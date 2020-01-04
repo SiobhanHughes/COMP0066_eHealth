@@ -24,14 +24,14 @@ def insert_dir(dir_path):
 def delete_dir():
     del sys.path[0]
     
-def dataDir_path(file_name):
+def dataDir_path(file_name, num):
     current = get_current_dir()
-    package_dir = getDir(current, 2)
+    package_dir = getDir(current, num)
     data_path = os.path.join(package_dir, 'data/' + file_name)
     return data_path
 
-def delete_from_dataDir(file_name):
-    file = dataDir_path(file_name)
+def delete_from_dataDir(file_name, num):
+    file = dataDir_path(file_name, num)
     if os.path.exists(file):
       os.remove(file)
     else:
