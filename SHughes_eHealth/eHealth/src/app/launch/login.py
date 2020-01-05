@@ -14,11 +14,9 @@ import inspect
 import sqlite3
 from sqlite3 import Error
 
-import admin_home
-import gp_home
-import patient_home
 import create_account
 import open_home
+import change_admin_passwd
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -30,6 +28,9 @@ path.insert_dir(eHealth_dir)
 from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
+from src.app.Admin import admin_home
+from src.app.GP import gp_home
+from src.app.Patient import patient_home
 path.delete_dir()
 
 
@@ -61,6 +62,8 @@ class Login(tk.Frame):
         self.lbl_password.grid(row=1, sticky="e")
         self.lbl_text = tk.Label(self.Form)
         self.lbl_text.grid(row=2, columnspan=2)
+        self.lbl_create = tk.Label(self.Form, text = "New user? Create an account.")
+        self.lbl_create.grid(row=4, columnspan=2)
 
         #==============================ENTRY WIDGETS==================================
         self.email = tk.Entry(self.Form, textvariable=self.EMAIL, font=(14))
@@ -71,17 +74,18 @@ class Login(tk.Frame):
         #==============================BUTTON WIDGETS=================================
         self.btn_login = tk.Button(self.Form, text="Login", width=45, command=self.Login)
         self.btn_login.grid(pady=25, row=3, columnspan=2)
-        #self.btn_login.bind('<Return>', self.Login)
+        self.btn_login.bind('<Return>', self.Login)
         self.btn_create = tk.Button(self.Form, text="Create", width=45, command=self.createAC_Window)
-        self.btn_create.grid(pady=25, row=4, columnspan=2)
+        self.btn_create.grid(pady=25, row=5, columnspan=2)
 
 
     #==============================METHODS========================================
-    def Database(self):
+    def connect_to_db(self):
         global conn, cursor
-        conn = sqlite3.connect("pythontut.db")
+        db_file = connect.db_path(3)
+        conn = connect.create_connection(db_file)
         cursor = conn.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS `member` (mem_id INTEGER NOT NULL PRIMARY KEY  AUTOINCREMENT, email TEXT, password TEXT)")       
+        
         cursor.execute("SELECT * FROM `member` WHERE `email` = 'admin' AND `password` = 'admin'")
         if cursor.fetchone() is None:
             cursor.execute("INSERT INTO `member` (email, password) VALUES('admin', 'admin')")
@@ -89,9 +93,28 @@ class Login(tk.Frame):
             
             
     def Login(self, event=None):
-        self.Database()
+        self.connect_to_db()
+        user_logged_in = path.dataDir_path('user.pickle', 3)
         if self.EMAIL.get() == "" or self.PASSWORD.get() == "":
             self.lbl_text.config(text="Please complete the required field!", fg="red")
+        elif os.path.exists(user_logged_in):
+            self.lbl_text.config(text="Another user is currently logged in!", fg="red")
+            self.EMAIL.set("")
+            self.PASSWORD.set("") 
+        elif self.EMAIL.get() == "admin" and self.PASSWORD.get() == "admin":
+            user = {'type': 'admin'}
+            track.store(user, 3)
+            self.admin_passwd()
+            self.EMAIL.set("")
+            self.PASSWORD.set("")
+        elif self.EMAIL.get() == "admin" and self.PASSWORD.get() != "admin":
+            #test password (hash) and open admin home
+            user = {'type': 'admin'}
+            track.store(user, 3)
+            self.EMAIL.set("")
+            self.PASSWORD.set("") 
+        
+            
         else:
             cursor.execute("SELECT * FROM `member` WHERE `email` = ? AND `password` = ?", (self.EMAIL.get(), self.PASSWORD.get())) #.get will get what user enters in the window
             if cursor.fetchone() is not None:
@@ -106,6 +129,20 @@ class Login(tk.Frame):
         cursor.close()
         conn.close()
         
+    
+    def admin_passwd(self): #open Change Admin Password window(Toplevel)
+        global change
+        top = tk.Toplevel()
+        change = change_admin_passwd.Change_admin_passwd(top)
+        top.title("Welcome to the eHealth system")
+        create.pack(side="top", fill="both", expand=True)
+        width = 800
+        height = 700
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+        x = (screen_width/2) - (width/2)
+        y = (screen_height/2) - (height/2)
+        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
     
     def createAC_Window(self): #open Create account window (Toplevel)
         global create

@@ -133,12 +133,14 @@ def update_admin(conn, passwd):
     :param passwd:
     """
     sql = ''' UPDATE Admin
-              SET passwd = ? 
+              SET passwd = ?, isLoggedin = "yes"
               WHERE administrator = "admin" '''
     try:
         cur = conn.cursor()
         cur.execute(sql, passwd)
         conn.commit()
+        cur.close()
+        conn.close()
     except Error as e:
         print(e)
         

@@ -9,9 +9,6 @@ import inspect
 import sqlite3
 from sqlite3 import Error
 
-import admin_home
-import gp_home
-import patient_home
 import open_home
 
 # get file path for eHealth directory and add it to sys.path 
@@ -24,6 +21,8 @@ path.insert_dir(eHealth_dir)
 from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
+from src.app.GP import gp_home
+from src.app.Patient import patient_home
 path.delete_dir()
 
 
@@ -73,9 +72,6 @@ class Create_account(tk.Frame):
         
     def create(self):
         pass
-    
-    def Admin_Window(self): #open Admin home window (Toplevel)
-        open_home.Home.Admin_Window(self)
         
     def GP_Window(self): #open GP home window (Toplevel)
         open_home.Home.GP_Window(self)
