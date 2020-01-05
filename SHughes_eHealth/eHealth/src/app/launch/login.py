@@ -15,6 +15,10 @@ import sqlite3
 from sqlite3 import Error
 
 import admin_home
+import gp_home
+import patient_home
+import create_account
+import open_home
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -67,7 +71,9 @@ class Login(tk.Frame):
         #==============================BUTTON WIDGETS=================================
         self.btn_login = tk.Button(self.Form, text="Login", width=45, command=self.Login)
         self.btn_login.grid(pady=25, row=3, columnspan=2)
-        self.btn_login.bind('<Return>', self.Login)
+        #self.btn_login.bind('<Return>', self.Login)
+        self.btn_create = tk.Button(self.Form, text="Create", width=45, command=self.createAC_Window)
+        self.btn_create.grid(pady=25, row=4, columnspan=2)
 
 
     #==============================METHODS========================================
@@ -89,7 +95,7 @@ class Login(tk.Frame):
         else:
             cursor.execute("SELECT * FROM `member` WHERE `email` = ? AND `password` = ?", (self.EMAIL.get(), self.PASSWORD.get())) #.get will get what user enters in the window
             if cursor.fetchone() is not None:
-                self.AdminWindow() #call the next window! This is how you jump around!!
+                self.Admin_Window() #call the next window! This is how you jump around!!
                 self.EMAIL.set("")
                 self.PASSWORD.set("")
                 self.lbl_text.config(text="")
@@ -101,11 +107,12 @@ class Login(tk.Frame):
         conn.close()
         
     
-    def AdminWindow(self): #next window
-        global Admin
+    def createAC_Window(self): #open Create account window (Toplevel)
+        global create
         top = tk.Toplevel()
-        Admin = admin_home.MainView(top)
-        Admin.pack(side="top", fill="both", expand=True)
+        create = create_account.Create_account(top)
+        top.title("Welcome to the eHealth system")
+        create.pack(side="top", fill="both", expand=True)
         width = 800
         height = 700
         screen_width = self.master.winfo_screenwidth()
@@ -115,25 +122,15 @@ class Login(tk.Frame):
         top.geometry("%dx%d+%d+%d" % (width, height, x, y))
         
     
-    def HomeWindow(self): #next window
-        global Home
-        self.master.withdraw()
-        Home = tk.Toplevel()
-        Home.title("Welcome to the eHealth system")
-        width = 600
-        height = 500
-        screen_width = self.master.winfo_screenwidth()
-        screen_height = self.master.winfo_screenheight()
-        x = (screen_width/2) - (width/2)
-        y = (screen_height/2) - (height/2)
-        self.master.resizable(0, 0)
-        Home.geometry("%dx%d+%d+%d" % (width, height, x, y))
-        lbl_home = tk.Label(Home, text="Successfully Login!", font=('arial', 20)).pack()
-        btn_back = tk.Button(Home, text='Back', command=self.Back).pack(pady=20, fill=tk.X)
-    
-    def Back(self):
-        Home.destroy()
-        self.master.deiconify()
+    def Admin_Window(self): #open Admin home window (Toplevel)
+        open_home.Home.Admin_Window(self)
+        
+    def GP_Window(self): #open GP home window (Toplevel)
+        open_home.Home.GP_Window(self)
+        
+    def Patient_Window(self): #open Pateint home window (Toplevel)
+        open_home.Home.Patient_Window(self)
+
     
     @staticmethod   
     def shutdown(self):
@@ -145,7 +142,7 @@ def main():
     login = Login(root)
     root.title("Welcome to the eHealth system")
     width = 400
-    height = 280
+    height = 350
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x = (screen_width/2) - (width/2)
@@ -158,20 +155,20 @@ def main():
 
 
 if __name__ == '__main__':
-    db_file = connect.db_path(3)
-    conn = connect.create_connection(db_file)
-    print(db_file)
-    print(conn)
-    print("sqlite version", sqlite3.sqlite_version)
-    if conn is not None:
-        print("connected")  
-    conn.close()
-
-    emp = {1:"A",2:"B",3:"C",4:"D",5:"E"}
-    track.store(emp, 3)
-    emp = track.load(emp, 3)
-    print(emp)
-    path.delete_from_dataDir("user.pickle", 3)
-    
     main()
+    
+    # db_file = connect.db_path(3)
+    # conn = connect.create_connection(db_file)
+    # print(db_file)
+    # print(conn)
+    # print("sqlite version", sqlite3.sqlite_version)
+    # if conn is not None:
+    #     print("connected")  
+    # conn.close()
+
+    # emp = {1:"A",2:"B",3:"C",4:"D",5:"E"}
+    # track.store(emp, 3)
+    # emp = track.load(emp, 3)
+    # print(emp)
+    # path.delete_from_dataDir("user.pickle", 3)
     

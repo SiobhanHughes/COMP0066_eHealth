@@ -27,38 +27,38 @@ path.delete_dir()
 
 #============================ADMIN HOME interface======================
 
-class Admin(tk.Frame):
+class GP(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
     def show(self):
         self.lift()
 
-class Admin1(Admin):
+class GP1(GP):
    def __init__(self, *args, **kwargs):
-       Admin.__init__(self, *args, **kwargs)
-       label = tk.Label(self, text="This is Admin 1")
+       GP.__init__(self, *args, **kwargs)
+       label = tk.Label(self, text="This is GP 1")
        label.pack(side="top", fill="both", expand=True)
 
-class Admin2(Admin):
+class GP2(GP):
    def __init__(self, *args, **kwargs):
-       Admin.__init__(self, *args, **kwargs)
-       label = tk.Label(self, text="This is Admin 2")
+       GP.__init__(self, *args, **kwargs)
+       label = tk.Label(self, text="This is GP 2")
        label.pack(side="top", fill="both", expand=True)
 
-class Admin3(Admin):
+class GP3(GP):
    def __init__(self, *args, **kwargs):
-       Admin.__init__(self, *args, **kwargs)
-       label = tk.Label(self, text="This is Admin 3")
+       GP.__init__(self, *args, **kwargs)
+       label = tk.Label(self, text="This is GP 3")
        label.pack(side="top", fill="both", expand=True)
 
 class MainView(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
-        lbl_title = tk.Label(self, text = "Admin: eHealth system", font=('arial', 15))
+        lbl_title = tk.Label(self, text = "GP: eHealth system", font=('arial', 15))
         lbl_title.pack(fill=tk.X)
-        p1 = Admin1(self)
-        p2 = Admin2(self)
-        p3 = Admin3(self)
+        p1 = GP1(self)
+        p2 = GP2(self)
+        p3 = GP3(self)
 
         buttonframe = tk.Frame(self)
         container = tk.Frame(self)
@@ -69,9 +69,9 @@ class MainView(tk.Frame):
         p2.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
         p3.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
-        b1 = tk.Button(buttonframe, text="Admin 1", command=p1.lift)
-        b2 = tk.Button(buttonframe, text="Admin 2", command=p2.lift)
-        b3 = tk.Button(buttonframe, text="Admin 3", command=p3.lift)
+        b1 = tk.Button(buttonframe, text="GP 1", command=p1.lift)
+        b2 = tk.Button(buttonframe, text="GP 2", command=p2.lift)
+        b3 = tk.Button(buttonframe, text="GP 3", command=p3.lift)
         btn_back = tk.Button(buttonframe, text='logout', command=self.logout)
 
         b1.pack(side="left")
@@ -82,11 +82,11 @@ class MainView(tk.Frame):
         p1.show()
         
     def logout(self):
-        print('Admin logged out. Widgets destroyed')
+        print('GP logged out. Widgets destroyed')
         return self.destroy()
 
 def close(*args):
-    print('Admin logged out')
+    print('GP logged out')
 
 if __name__ == "__main__":
     root = tk.Tk()

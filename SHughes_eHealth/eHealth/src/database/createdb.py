@@ -24,7 +24,7 @@ def create_admin(conn, admin):
     :param conn: Connection object
     :param admin: details to be inserted into Admin table """
     
-    sql = """ INSERT INTO Admin (administrator, passwd) VALUES (? , ?) """
+    sql = """ INSERT INTO Admin (administrator, passwd) VALUES (? , ?); """
     
     try:
         c = conn.cursor()
@@ -43,8 +43,8 @@ def main():
                                     
     admin = ('admin', 'admin')
  
-    create_gp_table = """CREATE TABLE IF NOT EXISTS GPs (
-                                    id integer PRIMARY KEY AUTOINCREMENT,
+    create_gp_table = """ CREATE TABLE IF NOT EXISTS GPs (
+                                    gpid integer PRIMARY KEY AUTOINCREMENT,
                                     fname text NOT NULL,
                                     lname text NOT NULL,
                                     email text NOT NULL,
@@ -56,10 +56,10 @@ def main():
                                     begin_date text NOT NULL,
                                     active text DEFAULT "yes" NOT NULL,
                                     isLoggedIn test Default "no" NOT NULL
-                                );"""
+                                ); """
  
-    create_patient_table = """CREATE TABLE IF NOT EXISTS Patients (
-                                    id integer PRIMARY KEY AUTOINCREMENT,
+    create_patient_table = """ CREATE TABLE IF NOT EXISTS Patients (
+                                    patientid integer PRIMARY KEY AUTOINCREMENT,
                                     fname text NOT NULL,
                                     lname text NOT NULL,
                                     email text NOT NULL,
@@ -79,9 +79,9 @@ def main():
                                     contact_relationship text NOT NULL,
                                     active text DEFAULT "yes" NOT NULL,
                                     isLoggedIn text Default "no" NOT NULL
-                                );"""
+                                ); """
     
-    create_patient_record_table = """CREATE TABLE IF NOT EXISTS Patient_Record (
+    create_patient_record_table = """ CREATE TABLE IF NOT EXISTS Patient_Record (
                                     NHSno text NOT NULL PRIMARY KEY,
                                     patientid integer NOT NULL,
                                     DOB text NOT NULL,
@@ -91,32 +91,33 @@ def main():
                                     smoker text NOT NULL,
                                     alcohol_units_per_week integer NOT NULL,
                                     exercise text NOT NULL,
-                                    FOREIGN KEY (patientid) REFERENCES Patients (id)
-                                );"""
+                                    FOREIGN KEY (patientid) REFERENCES Patients (patientid)
+                                ); """
                                 
-    create_vaccine_record_table = """CREATE TABLE IF NOT EXISTS Vaccine_Record (
+    create_vaccine_record_table = """ CREATE TABLE IF NOT EXISTS Vaccine_Record (
                                     NHSno text NOT NULL,
                                     patientid integer NOT NULL,
                                     date text NOT NULL,
                                     vaccine text NOT NULL,
-                                    FOREIGN KEY (patientid) REFERENCES Patients (id),
+                                    FOREIGN KEY (patientid) REFERENCES Patients (patientid),
                                     FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno),
                                     PRIMARY KEY (NHSno, date, vaccine)
-                                );"""
+                                ); """
     
-    create_medical_history_table = """CREATE TABLE IF NOT EXISTS Medical_History (
+    create_medical_history_table = """ CREATE TABLE IF NOT EXISTS Medical_History (
                                     NHSno text NOT NULL,
                                     patientid integer NOT NULL,
                                     gpid integer NOT NULL,
                                     date text NOT NULL,
                                     record text NOT NULL,
-                                    FOREIGN KEY (patientid) REFERENCES Patients (id),
-                                    FOREIGN KEY (gpid) REFERENCES GPs (id),
+                                    FOREIGN KEY (patientid) REFERENCES Patients (patientid),
+                                    FOREIGN KEY (gpid) REFERENCES GPs (gpid),
                                     FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno),
                                     PRIMARY KEY (NHSno, gpid, date)
-                                );"""
+                                ); """
     
-    create_prescriptions_table = """CREATE TABLE IF NOT EXISTS Presciptions (
+    create_prescriptions_table = """ CREATE TABLE IF NOT EXISTS Presciptions (
+                                    prescriptionid integer PRIMARY KEY AUTOINCREMENT,
                                     NHSno text NOT NULL,
                                     patientid integer NOT NULL,
                                     gpid integer NOT NULL,
@@ -126,22 +127,21 @@ def main():
                                     endDate text NOT NULL,
                                     repeatScript text DEFAULT "no" NOT NULL,
                                     repeatEnd text,
-                                    FOREIGN KEY (patientid) REFERENCES Patients (id),
-                                    FOREIGN KEY (gpid) REFERENCES GPs (id),
-                                    FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno),
-                                    PRIMARY KEY (NHSno, gpid, medication)
-                                );"""
+                                    FOREIGN KEY (patientid) REFERENCES Patients (patientid),
+                                    FOREIGN KEY (gpid) REFERENCES GPs (gpid),
+                                    FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno)
+                                ); """
                                 
-    create_appointments_table = """CREATE TABLE IF NOT EXISTS Appointments (
+    create_appointments_table = """ CREATE TABLE IF NOT EXISTS Appointments (
+                                    appointmentid integer PRIMARY KEY AUTOINCREMENT,
                                     gpid integer NOT NULL,
                                     date text NOT NULL,
                                     time text NOT NULL,
                                     patientid integer NULL,
                                     available text DEFAULT "yes" NOT NULL,
                                     FOREIGN KEY (patientid) REFERENCES Patients (id),
-                                    FOREIGN KEY (gpid) REFERENCES GPs (id),
-                                    PRIMARY KEY (gpid, date, time)
-                                );"""
+                                    FOREIGN KEY (gpid) REFERENCES GPs (id)
+                                ); """
     
     
     # create a database connection
