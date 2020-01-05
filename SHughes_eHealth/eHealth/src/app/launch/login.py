@@ -89,11 +89,6 @@ class Login(tk.Frame):
         db_file = connect.db_path(3)
         conn = connect.create_connection(db_file)
         cursor = conn.cursor()
-        
-        # cursor.execute("SELECT * FROM `member` WHERE `email` = 'admin' AND `password` = 'admin'")
-        # if cursor.fetchone() is None:
-        #     cursor.execute("INSERT INTO `member` (email, password) VALUES('admin', 'admin')")
-        #     conn.commit()
             
             
     def Login(self, event=None):
@@ -128,6 +123,22 @@ class Login(tk.Frame):
                     self.lbl_text.config(text="Admin entered incorrect password", fg="red")
                     self.EMAIL.set("")
                     self.PASSWORD.set("") 
+        elif self.EMAIL.get() != "admin":
+            cursor.execute("SELECT email, passwd FROM GPs WHERE email = ?", (self.EMAIL.get(),))
+            gp_login = cursor.fetchone()
+            cursor.execute("SELECT email, passwd FROM Patients WHERE email = ?", (self.EMAIL.get(),))
+            patient_login = cursor.fetchone()
+            if gp_login is not None:
+                #gp email correct - if passwd is None, create account, else check is password correct or not
+                pass
+            if patient_login is not None:
+                #patient email correct - if passwd is None, create account, else check is password correct or not
+                pass
+            #Create account window!!
+            else:
+                self.lbl_text.config(text="Invalid username or password", fg="red")
+                self.EMAIL.set("")
+                self.PASSWORD.set("")
         
             
         # else:
@@ -208,6 +219,20 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
+    # db_file = connect.db_path(3)
+    # conn = connect.create_connection(db_file)
+    # cursor = conn.cursor()
+    # email1 = 'jane_allen@gmail.com'
+    # print(email1)
+    # cursor.execute(' SELECT email, passwd FROM GPs WHERE email = ? ', (email1,))
+    # gp_login = cursor.fetchone()
+    # print(gp_login)
+    # email2 = 'nhughes@gmail.com'
+    # cursor.execute("SELECT email, passwd FROM Patients WHERE email = ?", (email2,))
+    # patient_login = cursor.fetchone()
+    # print(patient_login)
+    
     
     # db_file = connect.db_path(3)
     # conn = connect.create_connection(db_file)
