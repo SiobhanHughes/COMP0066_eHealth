@@ -5,11 +5,15 @@ import tkinter as tk
 import os
 import sys
 import inspect
+import re
+import hashlib
+import binascii
 
 import sqlite3
 from sqlite3 import Error
 
 import open_home
+import passwd_utilities as pwdu
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -89,16 +93,20 @@ class Change_admin_passwd(tk.Frame):
             self.lbl_text.config(text="Error: re-entered password does not match", fg="red")
             self.PASSWORD1.set("")
             self.PASSWORD2.set("") 
-        elif #check password regex
+        elif pwdu.strong_passwd(passwd1) == 'weak':
             self.lbl_text.config(text="Error: password does not match the requirements", fg="red")
             self.PASSWORD1.set("")
             self.PASSWORD2.set("") 
         else:
             self.connect_to_db()
-            #hash password
-            dbu.update_admin(conn, passwd)
+            pwd = pwdu.hash_password(passwd1)
+            login = 'yes'
+            print(pwd)
+            cursor.execute(' UPDATE Admin SET passwd = ?, isLoggedIn = ? WHERE administrator = "admin" ', (pwd, login))
+            conn.commit()
+            cursor.close()
+            conn.close()
             self.Admin_Window()
-            print('Admin logged in without changing password')
             self.destroy()
         
         

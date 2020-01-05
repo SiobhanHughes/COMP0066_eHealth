@@ -10,6 +10,9 @@ import tkinter as tk
 import os
 import sys
 import inspect
+import re
+import hashlib
+import binascii
 
 import sqlite3
 from sqlite3 import Error
@@ -17,6 +20,7 @@ from sqlite3 import Error
 import create_account
 import open_home
 import change_admin_passwd
+import passwd_utilities as pwdu
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -86,10 +90,10 @@ class Login(tk.Frame):
         conn = connect.create_connection(db_file)
         cursor = conn.cursor()
         
-        cursor.execute("SELECT * FROM `member` WHERE `email` = 'admin' AND `password` = 'admin'")
-        if cursor.fetchone() is None:
-            cursor.execute("INSERT INTO `member` (email, password) VALUES('admin', 'admin')")
-            conn.commit()
+        # cursor.execute("SELECT * FROM `member` WHERE `email` = 'admin' AND `password` = 'admin'")
+        # if cursor.fetchone() is None:
+        #     cursor.execute("INSERT INTO `member` (email, password) VALUES('admin', 'admin')")
+        #     conn.commit()
             
             
     def Login(self, event=None):
@@ -101,31 +105,42 @@ class Login(tk.Frame):
             self.lbl_text.config(text="Another user is currently logged in!", fg="red")
             self.EMAIL.set("")
             self.PASSWORD.set("") 
-        elif self.EMAIL.get() == "admin" and self.PASSWORD.get() == "admin":
-            user = {'type': 'admin'}
-            track.store(user, 3)
-            self.admin_passwd()
-            self.EMAIL.set("")
-            self.PASSWORD.set("")
-        elif self.EMAIL.get() == "admin" and self.PASSWORD.get() != "admin":
-            #test password (hash) and open admin home
-            user = {'type': 'admin'}
-            track.store(user, 3)
-            self.EMAIL.set("")
-            self.PASSWORD.set("") 
-        
-            
-        else:
-            cursor.execute("SELECT * FROM `member` WHERE `email` = ? AND `password` = ?", (self.EMAIL.get(), self.PASSWORD.get())) #.get will get what user enters in the window
-            if cursor.fetchone() is not None:
-                self.Admin_Window() #call the next window! This is how you jump around!!
+        elif self.EMAIL.get() == "admin":
+            cursor.execute("SELECT passwd FROM Admin")
+            row = cursor.fetchone()
+            print(row[0])
+            if row[0] == 'admin':
+                user = {'type': 'admin'}
+                track.store(user, 3)
+                self.admin_passwd()
                 self.EMAIL.set("")
                 self.PASSWORD.set("")
-                self.lbl_text.config(text="")
-            else:
-                self.lbl_text.config(text="Invalid username or password", fg="red")
-                self.EMAIL.set("")
-                self.PASSWORD.set("")   
+            elif row[0] != 'admin':
+                storedpasswd = row[0]
+                enteredpasswd = self.PASSWORD.get()
+                if pwdu.verify_password(storedpasswd, enteredpasswd):
+                    user = {'type': 'admin'}
+                    track.store(user, 3)
+                    self.EMAIL.set("")
+                    self.PASSWORD.set("") 
+                    self.Admin_Window()
+                else:
+                    self.lbl_text.config(text="Admin entered incorrect password", fg="red")
+                    self.EMAIL.set("")
+                    self.PASSWORD.set("") 
+        
+            
+        # else:
+        #     cursor.execute("SELECT * FROM `member` WHERE `email` = ? AND `password` = ?", (self.EMAIL.get(), self.PASSWORD.get())) #.get will get what user enters in the window
+        #     if cursor.fetchone() is not None:
+        #         self.Admin_Window() #call the next window! This is how you jump around!!
+        #         self.EMAIL.set("")
+        #         self.PASSWORD.set("")
+        #         self.lbl_text.config(text="")
+        #     else:
+        #         self.lbl_text.config(text="Invalid username or password", fg="red")
+        #         self.EMAIL.set("")
+        #         self.PASSWORD.set("")   
         cursor.close()
         conn.close()
         

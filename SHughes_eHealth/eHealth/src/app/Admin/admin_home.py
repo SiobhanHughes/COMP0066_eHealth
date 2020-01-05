@@ -81,9 +81,21 @@ class MainView(tk.Frame):
 
         p1.show()
         
+    def connect_to_db(self):
+        global conn, cursor
+        db_file = connect.db_path(3)
+        conn = connect.create_connection(db_file)
+        cursor = conn.cursor()
+    
     def logout(self):
+        self.connect_to_db()
         print('Admin logged out. Widgets destroyed')
-        return self.destroy()
+        cursor.execute(" UPDATE Admin SET isLoggedIn = 'no' WHERE administrator = 'admin'")
+        conn.commit()
+        cursor.close()
+        conn.close()
+        path.delete_from_dataDir('user.pickle', 3)
+        self.destroy()
 
 def close(*args):
     print('Admin logged out')

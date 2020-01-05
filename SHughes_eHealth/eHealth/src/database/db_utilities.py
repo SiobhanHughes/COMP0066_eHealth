@@ -124,25 +124,6 @@ def insert_appointment(conn, appointment):
         print(e)
 
 
-#==============================UPDATE admin password======================================
-
-def update_admin(conn, passwd):
-    """
-    update Admin table - set new password (default password is admin)
-    :param conn: Connection object
-    :param passwd:
-    """
-    sql = ''' UPDATE Admin
-              SET passwd = ?, isLoggedin = "yes"
-              WHERE administrator = "admin" '''
-    try:
-        cur = conn.cursor()
-        cur.execute(sql, passwd)
-        conn.commit()
-        cur.close()
-        conn.close()
-    except Error as e:
-        print(e)
         
 #==============================Patient makes appointment======================================
 def book_appointment(conn, book):
