@@ -78,6 +78,8 @@ class Change_admin_passwd(tk.Frame):
         self.btn_create = tk.Button(self.Form, text="No", width=45, command=self.no)
         self.btn_create.grid(pady=25, row=8, columnspan=2)
         
+        #==============================METHODS=================================
+        
     def connect_to_db(self):
         global conn, cursor
         db_file = connect.db_path(3)
@@ -85,8 +87,8 @@ class Change_admin_passwd(tk.Frame):
         cursor = conn.cursor()
     
     def change_passwd(self):
-        passwd1 = self.PASSWORD1.get()
-        passwd2 = self.PASSWORD2.get()
+        passwd1 = self.PASSWORD1.get().strip()
+        passwd2 = self.PASSWORD2.get().strip()
         if passwd1 == "" or passwd2 == "":
             self.lbl_text.config(text="Please complete the required field!", fg="red")
         elif passwd1 != passwd2:

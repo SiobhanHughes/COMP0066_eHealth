@@ -108,6 +108,7 @@ class Login(tk.Frame):
             print(row[0])
             if row[0] == 'admin':
                 user = {'type': 'admin'}
+                print(user)
                 track.store(user, 3)
                 self.admin_passwd()
                 self.EMAIL.set("")
@@ -116,6 +117,7 @@ class Login(tk.Frame):
                 storedpasswd = row[0]
                 if pwdu.verify_password(storedpasswd, entered_passwd):
                     user = {'type': 'admin'}
+                    print(user)
                     track.store(user, 3)
                     self.EMAIL.set("")
                     self.PASSWORD.set("") 
@@ -155,7 +157,7 @@ class Login(tk.Frame):
                     track.store(user, 3)
                     self.EMAIL.set("")
                     self.PASSWORD.set("") 
-                    self.Admin_Window()
+                    self.GP_Window()
                 else:
                     self.lbl_text.config(text="GP entered incorrect password", fg="red")
                     self.EMAIL.set("")
@@ -170,12 +172,10 @@ class Login(tk.Frame):
                     track.store(user, 3)
                     self.EMAIL.set("")
                     self.PASSWORD.set("") 
-                    self.Admin_Window()
+                    self.Patient_Window()
                 else:
                     self.lbl_text.config(text="Patient entered incorrect password", fg="red")
                     self.EMAIL.set("")
-                
-            #Create account window!!
             else:
                 self.lbl_text.config(text="Invalid username or password", fg="red")
                 self.EMAIL.set("")
