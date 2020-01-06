@@ -37,8 +37,7 @@ def main():
  
     create_admin_table = """ CREATE TABLE IF NOT EXISTS Admin (
                                     administrator text NOT NULL,
-                                    passwd text NOT NULL,
-                                    isLoggedIn test Default "no" NOT NULL
+                                    passwd text NOT NULL
                                     ); """
                                     
     admin = ('admin', 'admin')
@@ -54,8 +53,7 @@ def main():
                                     postcode text NOT NULL,
                                     tel text NOT NULL,
                                     begin_date text NOT NULL,
-                                    active text DEFAULT "yes" NOT NULL,
-                                    isLoggedIn test Default "no" NOT NULL
+                                    active text DEFAULT "yes" NOT NULL
                                 ); """
  
     create_patient_table = """ CREATE TABLE IF NOT EXISTS Patients (
@@ -77,8 +75,7 @@ def main():
                                     contact_postcode text NOT NULL,
                                     contact_tel text NOT NULL,
                                     contact_relationship text NOT NULL,
-                                    active text DEFAULT "yes" NOT NULL,
-                                    isLoggedIn text Default "no" NOT NULL
+                                    active text DEFAULT "yes" NOT NULL
                                 ); """
     
     create_patient_record_table = """ CREATE TABLE IF NOT EXISTS Patient_Record (

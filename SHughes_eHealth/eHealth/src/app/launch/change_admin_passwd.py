@@ -100,9 +100,8 @@ class Change_admin_passwd(tk.Frame):
         else:
             self.connect_to_db()
             pwd = pwdu.hash_password(passwd1)
-            login = 'yes'
             print(pwd)
-            cursor.execute(' UPDATE Admin SET passwd = ?, isLoggedIn = ? WHERE administrator = "admin" ', (pwd, login))
+            cursor.execute(' UPDATE Admin SET passwd = ? WHERE administrator = "admin" ', (pwd,))
             conn.commit()
             cursor.close()
             conn.close()
@@ -112,11 +111,6 @@ class Change_admin_passwd(tk.Frame):
         
     
     def no(self):
-        self.connect_to_db()
-        cursor.execute(" UPDATE Admin SET isLoggedIn = 'yes' WHERE administrator = 'admin'")
-        conn.commit()
-        cursor.close()
-        conn.close()
         self.Admin_Window()
         print('Admin logged in without changing password')
         self.destroy()

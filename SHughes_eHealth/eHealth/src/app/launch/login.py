@@ -94,13 +94,15 @@ class Login(tk.Frame):
     def Login(self, event=None):
         self.connect_to_db()
         user_logged_in = path.dataDir_path('user.pickle', 3)
-        if self.EMAIL.get() == "" or self.PASSWORD.get() == "":
+        entered_passwd = self.PASSWORD.get().strip()
+        entered_email = self.EMAIL.get().strip()
+        if entered_email == "" or entered_passwd == "":
             self.lbl_text.config(text="Please complete the required field!", fg="red")
         elif os.path.exists(user_logged_in):
             self.lbl_text.config(text="Another user is currently logged in!", fg="red")
             self.EMAIL.set("")
             self.PASSWORD.set("") 
-        elif self.EMAIL.get() == "admin":
+        elif entered_email == "admin":
             cursor.execute("SELECT passwd FROM Admin")
             row = cursor.fetchone()
             print(row[0])
@@ -112,8 +114,7 @@ class Login(tk.Frame):
                 self.PASSWORD.set("")
             elif row[0] != 'admin':
                 storedpasswd = row[0]
-                enteredpasswd = self.PASSWORD.get()
-                if pwdu.verify_password(storedpasswd, enteredpasswd):
+                if pwdu.verify_password(storedpasswd, entered_passwd):
                     user = {'type': 'admin'}
                     track.store(user, 3)
                     self.EMAIL.set("")
@@ -123,45 +124,87 @@ class Login(tk.Frame):
                     self.lbl_text.config(text="Admin entered incorrect password", fg="red")
                     self.EMAIL.set("")
                     self.PASSWORD.set("") 
-        elif self.EMAIL.get() != "admin":
-            cursor.execute("SELECT email, passwd FROM GPs WHERE email = ?", (self.EMAIL.get(),))
+        elif entered_email != "admin":
+            cursor.execute(self.gp_login_query(), (entered_email,))
             gp_login = cursor.fetchone()
-            cursor.execute("SELECT email, passwd FROM Patients WHERE email = ?", (self.EMAIL.get(),))
+            print(gp_login)
+            cursor.execute(self.patient_login_query(),(entered_email,))
             patient_login = cursor.fetchone()
-            if gp_login is not None:
-                #gp email correct - if passwd is None, create account, else check is password correct or not
-                pass
-            if patient_login is not None:
-                #patient email correct - if passwd is None, create account, else check is password correct or not
-                pass
+            print(patient_login)
+            if gp_login is not None and gp_login[4] is None:
+                self.lbl_text.config(text="Please create an account", fg="red")
+                self.EMAIL.set("")
+                self.PASSWORD.set("")
+            elif gp_login is not None and gp_login[5] == 'no':
+                self.lbl_text.config(text="Your account has been deactivated. Please contact the Admin.", fg="red")
+                self.EMAIL.set("")
+                self.PASSWORD.set("")
+            elif patient_login is not None and patient_login[4] is None:
+                self.lbl_text.config(text="Please create an account", fg="red")
+                self.EMAIL.set("")
+                self.PASSWORD.set("")
+            elif patient_login is not None and patient_login[6] == 'no':
+                self.lbl_text.config(text="Your account has been deactivated. Please contact the Admin.", fg="red")
+                self.EMAIL.set("")
+                self.PASSWORD.set("")
+            elif gp_login is not None and gp_login[4] is None:
+                storedpasswd = gp_login[4]
+                if pwdu.verify_password(storedpasswd, entered_passwd):
+                    user = {'type': 'gp', 'id': gp_login[0], 'fname': gp_login[1], 'lname': gp_login[2], 'email': gp_login[3]}
+                    print(user)
+                    track.store(user, 3)
+                    self.EMAIL.set("")
+                    self.PASSWORD.set("") 
+                    self.Admin_Window()
+                else:
+                    self.lbl_text.config(text="GP entered incorrect password", fg="red")
+                    self.EMAIL.set("")
+                    self.PASSWORD.set("")
+            elif patient_login is not None and patient_login[4] is None:
+                storedpasswd = patient_login[4]
+                if pwdu.verify_password(storedpasswd, entered_passwd):
+                    user = {'type': 'patient', 'id': patient_login[0],
+                            'fname': patient_login[1], 'lname': patient_login[2],
+                            'email': patient_login[3], 'NHSno': patient_login[5]}
+                    print(user)
+                    track.store(user, 3)
+                    self.EMAIL.set("")
+                    self.PASSWORD.set("") 
+                    self.Admin_Window()
+                else:
+                    self.lbl_text.config(text="Patient entered incorrect password", fg="red")
+                    self.EMAIL.set("")
+                
             #Create account window!!
             else:
                 self.lbl_text.config(text="Invalid username or password", fg="red")
                 self.EMAIL.set("")
                 self.PASSWORD.set("")
-        
-            
-        # else:
-        #     cursor.execute("SELECT * FROM `member` WHERE `email` = ? AND `password` = ?", (self.EMAIL.get(), self.PASSWORD.get())) #.get will get what user enters in the window
-        #     if cursor.fetchone() is not None:
-        #         self.Admin_Window() #call the next window! This is how you jump around!!
-        #         self.EMAIL.set("")
-        #         self.PASSWORD.set("")
-        #         self.lbl_text.config(text="")
-        #     else:
-        #         self.lbl_text.config(text="Invalid username or password", fg="red")
-        #         self.EMAIL.set("")
-        #         self.PASSWORD.set("")   
+        else:
+            self.lbl_text.config(text="Error trying to login", fg="red")
+            self.EMAIL.set("")
+            self.PASSWORD.set("")  
         cursor.close()
         conn.close()
-        
+    
+    @staticmethod
+    def gp_login_query():
+        gp_sql = "SELECT gpid, fname, lname, email, passwd, active FROM GPs WHERE email = ?"
+        return gp_sql
+    
+    @staticmethod
+    def patient_login_query():
+        patient_sql = '''SELECT p.patientid, fname, lname, email, passwd, NHSno, active
+                        FROM Patients p, Patient_Record r
+                        WHERE p.patientid = r.patientid AND email = ?'''
+        return patient_sql
     
     def admin_passwd(self): #open Change Admin Password window(Toplevel)
         global change
         top = tk.Toplevel()
         change = change_admin_passwd.Change_admin_passwd(top)
         top.title("Welcome to the eHealth system")
-        create.pack(side="top", fill="both", expand=True)
+        change.pack(side="top", fill="both", expand=True)
         width = 800
         height = 700
         screen_width = self.master.winfo_screenwidth()
@@ -194,9 +237,8 @@ class Login(tk.Frame):
     def Patient_Window(self): #open Pateint home window (Toplevel)
         open_home.Home.Patient_Window(self)
 
-    
-    @staticmethod   
     def shutdown(self):
+        path.delete_from_dataDir('user.pickle', 3)
         print('Application closed')
 
 
@@ -204,8 +246,8 @@ def main():
     root = tk.Tk()
     login = Login(root)
     root.title("Welcome to the eHealth system")
-    width = 400
-    height = 350
+    width = 500
+    height = 450
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x = (screen_width/2) - (width/2)
@@ -225,13 +267,16 @@ if __name__ == '__main__':
     # cursor = conn.cursor()
     # email1 = 'jane_allen@gmail.com'
     # print(email1)
-    # cursor.execute(' SELECT email, passwd FROM GPs WHERE email = ? ', (email1,))
+    # sql1 = Login.gp_login_query()
+    # print(sql1)
+    # cursor.execute(sql1, (email1,))
     # gp_login = cursor.fetchone()
     # print(gp_login)
     # email2 = 'nhughes@gmail.com'
-    # cursor.execute("SELECT email, passwd FROM Patients WHERE email = ?", (email2,))
-    # patient_login = cursor.fetchone()
-    # print(patient_login)
+    # sql2 = Login.patient_login_query(email2)
+    #cursor.execute(sql2)
+    #patient_login = cursor.fetchone()
+    #print(patient_login)
     
     
     # db_file = connect.db_path(3)

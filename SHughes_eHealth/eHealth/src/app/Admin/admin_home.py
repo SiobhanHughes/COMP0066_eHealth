@@ -88,12 +88,7 @@ class MainView(tk.Frame):
         cursor = conn.cursor()
     
     def logout(self):
-        self.connect_to_db()
         print('Admin logged out. Widgets destroyed')
-        cursor.execute(" UPDATE Admin SET isLoggedIn = 'no' WHERE administrator = 'admin'")
-        conn.commit()
-        cursor.close()
-        conn.close()
         path.delete_from_dataDir('user.pickle', 3)
         self.destroy()
 
