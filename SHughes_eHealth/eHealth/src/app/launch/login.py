@@ -13,6 +13,7 @@ import inspect
 import re
 import hashlib
 import binascii
+import logging
 
 import sqlite3
 from sqlite3 import Error
@@ -38,7 +39,13 @@ from src.app.Patient import patient_home
 path.delete_dir()
 
 
-#============================Interface for login to open main window======================
+#============================Interface for LOGIN to open main/root window======================
+
+log_file = path.dataDir_path('eHealth_output.log', 3)
+logging.basicConfig(level=logging.DEBUG,
+                    filename=log_file,
+                    filemode ='a',
+                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
 
 class Login(tk.Frame):
     
@@ -238,7 +245,9 @@ class Login(tk.Frame):
         open_home.Home.Patient_Window(self)
 
     def shutdown(self):
-        path.delete_from_dataDir('user.pickle', 3)
+        path.delete_from_dataDir('user.pickle', 3) #deleting user.pickle indicates no user is logged in and frees the application for another user to log in
+        #if user.pickle file exists (user forgot to log out), it is deleted when application shuts down
+        logging.info('Application closed')
         print('Application closed')
 
 

@@ -4,14 +4,12 @@
 import sqlite3
 from sqlite3 import Error
 import connect
-import db_path
 
 
 def create_table(conn, create_table_sql):
     """ create a table from the create_table_sql statement
     :param conn: Connection object
     :param create_table_sql: a CREATE TABLE statement
-    :return:
     """
     try:
         c = conn.cursor()
@@ -33,7 +31,7 @@ def create_admin(conn, admin):
         print(e)
  
 def main():
-    database = db_path.database_path
+    database = connect.db_path(2)
  
     create_admin_table = """ CREATE TABLE IF NOT EXISTS Admin (
                                     administrator text NOT NULL,

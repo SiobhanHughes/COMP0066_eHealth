@@ -9,6 +9,8 @@ import os
 import sys
 import inspect
 
+import logging
+
 import sqlite3
 from sqlite3 import Error
 
@@ -25,7 +27,13 @@ from src.utilities import track_user as track
 path.delete_dir()
 
 
-#============================ADMIN HOME interface======================
+#============================GP HOME interface======================
+
+log_file = path.dataDir_path('eHealth_output.log', 3)
+logging.basicConfig(level=logging.DEBUG,
+                    filename=log_file,
+                    filemode ='a',
+                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
 
 class GP(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -81,12 +89,21 @@ class MainView(tk.Frame):
 
         p1.show()
         
+    def connect_to_db(self):
+        global conn, cursor
+        db_file = connect.db_path(3)
+        conn = connect.create_connection(db_file)
+        cursor = conn.cursor()
+    
     def logout(self):
         print('GP logged out. Widgets destroyed')
-        return self.destroy()
+        logging.info('GP logged out. Widgets destroyed')
+        path.delete_from_dataDir('user.pickle', 3) #deleting user.pickle indicates no user is logged in and frees the application for another user to log in
+        logging.info('user.pickle deleted - new user can log in')
+        self.destroy()
 
 def close(*args):
-    print('GP logged out')
+    print('GP logged out. Window closed')
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -94,5 +111,5 @@ if __name__ == "__main__":
     main.pack(side="top", fill="both", expand=True)
     root.title("Welcome to the eHealth system")
     root.wm_geometry("400x400")
-    main.bind('<Destroy>', close) #bind a function call to when the window is closed/destroyed - logout the user and delete user.pickle
+    main.bind('<Destroy>', close)
     root.mainloop()

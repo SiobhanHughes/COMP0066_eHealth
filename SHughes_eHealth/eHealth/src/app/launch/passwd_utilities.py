@@ -4,21 +4,13 @@ import hashlib
 import binascii
 
 def strong_passwd(passwd):
-    if len(passwd) < 8:
-        #print('too short)
-        return 'weak'
-    elif not re.match(r'.*[0-9].*', passwd):
-        #print('no number')
-        return 'weak' 
-    elif not re.match(r'.*[A-Z].*', passwd):
-        #print('no capital')
-        return 'weak'
-    elif not re.match(r'.*[!@£$%^&*()_+={}?:~+\[\]].*', passwd):
-        #print('no special character')
-        return 'weak'
-    else:
-        #print('good password')
+    """ Test that password meets requirements """
+    if re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", passwd):
+        print ("match")
         return 'strong'
+    else:
+        print ("Not Match")
+        return 'weak'
 
 # To hash protect password, code was used from: https://www.vitoshacademy.com/hashing-passwords-in-python/
   
@@ -44,5 +36,5 @@ def verify_password(stored_password, provided_password):
 
 
 if __name__ == '__main__':
-    password = input('Enter password to test: ')
-    print(strong_passwd(password))
+    passwd = input('Enter password to test: ')
+    print(strong_passwd(passwd))

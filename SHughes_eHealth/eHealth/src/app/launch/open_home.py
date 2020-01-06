@@ -27,6 +27,7 @@ path.delete_dir()
 #============================Open Home Windows======================
 
 class Home:
+    """ Opens Home windows - Appropriate Home window called when user logs in """
     
     def Admin_Window(self): #open Admin home window (Toplevel)
         global Admin

@@ -5,10 +5,12 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 import connect
-import db_path
 import db_utilities as db
 
 def main():
+    
+    """ Autopopulate the databse with 2 GPs and 2 Patients """
+    
     gp1 = ('Jane', 'Allen', 'jane_allen@gmail.com', 'Claire Lane', 'London', 'N1', '07912378346', date.today())
 
     gp2_date = date.today() + relativedelta(months=-6)
@@ -21,7 +23,7 @@ def main():
     patient2 = ('Norman', 'Smith', 'nsmith@gmail.com', 'Packington street', 'London', 'N1', '07988504379', patient2_date,
                 'Damien', 'Smith', 'damien_smith@gamil.com', 'Canary street', 'London', 'N1', '07604482117', 'son')
     
-    database = db_path.database_path
+    database = connect.db_path(2)
     conn = connect.create_connection(database)
     
     if conn is not None:
