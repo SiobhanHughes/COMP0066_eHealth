@@ -8,6 +8,7 @@ import inspect
 import re
 import hashlib
 import binascii
+import logging
 
 import sqlite3
 from sqlite3 import Error
@@ -29,7 +30,13 @@ from src.app.Admin import admin_home
 path.delete_dir()
 
 
-#============================ADMIN HOME interface======================
+#============================CHANGE ADMIN PASSWORD interface======================
+
+log_file = path.dataDir_path('eHealth_output.log', 3)
+logging.basicConfig(level=logging.DEBUG,
+                    filename=log_file,
+                    filemode ='a',
+                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
 
 
 class Change_admin_passwd(tk.Frame):
@@ -52,9 +59,9 @@ class Change_admin_passwd(tk.Frame):
         self.lbl_title.pack(fill=tk.X)
         self.lbl_admin = tk.Label(self.Form, text = "Username: admin", font=('arial', 14), bd=15)
         self.lbl_admin.grid(row=0, sticky="e")
-        self.lbl_admin = tk.Label(self.Form, text = "Password requirements: ", font=('arial', 12), bd=15)
+        self.lbl_admin = tk.Label(self.Form, text = "Password requirements: ", font=('arial', 15), bd=14, fg='green')
         self.lbl_admin.grid(row=1, sticky="e")
-        self.lbl_admin = tk.Label(self.Form, text = "At least 8 characters, A capital letter, one number, one special characrter. ", font=('arial', 12), bd=15)
+        self.lbl_admin = tk.Label(self.Form, text = "At least 8 characters, A capital letter, one number, one special characrter ", font=('arial', 14), bd=15, fg='green')
         self.lbl_admin.grid(row=2, sticky="e")
         self.lbl_password1 = tk.Label(self.Form, text = "Password:", font=('arial', 14), bd=15)
         self.lbl_password1.grid(row=3, sticky="e")
@@ -104,6 +111,7 @@ class Change_admin_passwd(tk.Frame):
             pwd = pwdu.hash_password(passwd1)
             print(pwd)
             cursor.execute(' UPDATE Admin SET passwd = ? WHERE administrator = "admin" ', (pwd,))
+            logging.info('Admin password changed from default')
             conn.commit()
             cursor.close()
             conn.close()
@@ -114,6 +122,7 @@ class Change_admin_passwd(tk.Frame):
     
     def no(self):
         self.Admin_Window()
+        logging.info('Admin logged in without changing password')
         print('Admin logged in without changing password')
         self.destroy()
         

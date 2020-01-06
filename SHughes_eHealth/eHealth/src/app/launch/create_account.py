@@ -8,6 +8,7 @@ import inspect
 import re
 import hashlib
 import binascii
+import logging
 
 import sqlite3
 from sqlite3 import Error
@@ -31,6 +32,11 @@ path.delete_dir()
 
 #============================CREATE ACCOUNT interface======================
 
+log_file = path.dataDir_path('eHealth_output.log', 3)
+logging.basicConfig(level=logging.DEBUG,
+                    filename=log_file,
+                    filemode ='a',
+                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
 
 class Create_account(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -51,31 +57,33 @@ class Create_account(tk.Frame):
         #==============================LABELS=========================================
         self.lbl_title = tk.Label(self.Top, text = "Create an account for the eHealth system", font=('arial', 15))
         self.lbl_title.pack(fill=tk.X)
+        self.lbl_admin = tk.Label(self.Form, text = "Use the email that you gave at the time of registering with the GP Practice to create an account. ", font=('arial', 15), bd=15, fg='blue')
+        self.lbl_admin.grid(row=0, sticky="e")
         self.lbl_email = tk.Label(self.Form, text = "email:", font=('arial', 14), bd=15)
-        self.lbl_email.grid(row=0, sticky="e")
-        self.lbl_admin = tk.Label(self.Form, text = "Password requirements: ", font=('arial', 12), bd=15)
-        self.lbl_admin.grid(row=1, sticky="e")
-        self.lbl_admin = tk.Label(self.Form, text = "At least 8 characters, A capital letter, one number, one special characrter. ", font=('arial', 12), bd=15)
+        self.lbl_email.grid(row=1, sticky="e")
+        self.lbl_admin = tk.Label(self.Form, text = "Password requirements: ", font=('arial', 15), bd=15, fg='green')
         self.lbl_admin.grid(row=2, sticky="e")
+        self.lbl_admin = tk.Label(self.Form, text = "At least 8 characters, A capital letter, one number, one special characrter ", font=('arial', 15), bd=15, fg='green')
+        self.lbl_admin.grid(row=3, sticky="e")
         self.lbl_password1 = tk.Label(self.Form, text = "Password:", font=('arial', 14), bd=15)
-        self.lbl_password1.grid(row=3, sticky="e")
+        self.lbl_password1.grid(row=4, sticky="e")
         self.lbl_password2 = tk.Label(self.Form, text = "Re-enter Password:", font=('arial', 14), bd=15)
-        self.lbl_password2.grid(row=4, sticky="e")
+        self.lbl_password2.grid(row=5, sticky="e")
         self.lbl_text = tk.Label(self.Form)
-        self.lbl_text.grid(row=5, columnspan=2)
+        self.lbl_text.grid(row=6, columnspan=2)
 
         #==============================ENTRY WIDGETS==================================
         self.email = tk.Entry(self.Form, textvariable=self.EMAIL, font=(14))
-        self.email.grid(row=0, column=1)
+        self.email.grid(row=1, column=1)
         self.password1 = tk.Entry(self.Form, textvariable=self.PASSWORD1, show="*", font=(14))
-        self.password1.grid(row=3, column=1)
+        self.password1.grid(row=4, column=1)
         self.password2 = tk.Entry(self.Form, textvariable=self.PASSWORD2, show="*", font=(14))
-        self.password2.grid(row=4, column=1)
+        self.password2.grid(row=5, column=1)
 
         #==============================BUTTON WIDGETS=================================
-        self.btn_login = tk.Button(self.Form, text="Create", width=45, command=self.create)
-        self.btn_login.grid(pady=25, row=6, columnspan=2)
-        self.btn_login.bind('<Return>', self.create)
+        self.btn_login = tk.Button(self.Form, text="Create", width=45, command=self.check_email)
+        self.btn_login.grid(pady=25, row=7, columnspan=2)
+        self.btn_login.bind('<Return>', self.check_email)
         
         #==============================METHODS=================================
         
@@ -86,14 +94,16 @@ class Create_account(tk.Frame):
         conn = connect.create_connection(db_file)
         cursor = conn.cursor()
     
-    def create(self):
+    def check_email(self):
         self.connect_to_db()
         email = self.EMAIL.get().strip()
         cursor.execute(' SELECT email FROM GPs WHERE email = ? ', (email,))
         gp = cursor.fetchone()
+        logging.info('Result of sql query to select for GP email: ' + str(gp))
         print(gp)
         cursor.execute(' SELECT email FROM Patients WHERE email = ? ', (email,))
         patient = cursor.fetchone()
+        logging.info('Result of sql query to select for Patient email: ' + str(patient))
         print(patient)
         conn.commit()
         cursor.close()
@@ -115,8 +125,9 @@ class Create_account(tk.Frame):
     def passwd(self, user, email):
         passwd1 = self.PASSWORD1.get().strip()
         passwd2 = self.PASSWORD2.get().strip()
+        print(email)
         if passwd1 == "" or passwd2 == "":
-            self.lbl_text.config(text="Please complete the required field!", fg="red")
+            self.lbl_text.config(text="Please complete the required password fields!", fg="red")
         elif passwd1 != passwd2:
             self.lbl_text.config(text="Error: re-entered password does not match", fg="red")
             self.PASSWORD1.set("")
@@ -131,6 +142,7 @@ class Create_account(tk.Frame):
             print(pwd)
             if user == 'GP':
                 cursor.execute(' UPDATE GPs SET passwd = ? WHERE email = ? ', (pwd, email))
+                logging.info('GP account created')
                 conn.commit()
                 cursor.close()
                 conn.close()
@@ -138,6 +150,7 @@ class Create_account(tk.Frame):
                 self.destroy()
             elif user == 'Patient':
                 cursor.execute(' UPDATE Patients SET passwd = ? WHERE email = ? ', (pwd, email))
+                logging.info('Patient account created')
                 conn.commit()
                 cursor.close()
                 conn.close()
@@ -149,9 +162,9 @@ class Create_account(tk.Frame):
         message = tk.Toplevel()
         message.title("Welcome to the eHealth system")
         width = 500
-        height = 500
+        height = 200
         message.geometry("%dx%d" % (width, height))
-        display = tk.Label(message, text="You successfully created an account! Now you can log in.", font=('arial', 14)).pack()
+        tk.Label(message, text="You successfully created an account! You can now log in.", font=('arial', 14)).pack()
         
         
         
@@ -164,6 +177,6 @@ if __name__ == "__main__":
     main = Create_account(root)
     main.pack(side="top", fill="both", expand=True)
     root.title("Welcome to the eHealth system")
-    root.wm_geometry("600x600")
+    root.wm_geometry("900x600")
     main.bind('<Destroy>', close) #bind a function call to when the window is closed/destroyed - logout the user and delete user.pickle
     root.mainloop()
