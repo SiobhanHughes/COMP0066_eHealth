@@ -48,6 +48,7 @@ class ScrolledFrame(tk.Frame):
     def resize(self, event=None): 
         self._canvas.configure(scrollregion=self._canvas.bbox('all'))
 
+
 class Question:
 
     def __init__(self, parent, question, answer):

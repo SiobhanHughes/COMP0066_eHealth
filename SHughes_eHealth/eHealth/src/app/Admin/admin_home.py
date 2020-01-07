@@ -15,6 +15,8 @@ import logging
 import sqlite3
 from sqlite3 import Error
 
+import add_user
+
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
 # delete file path for eHealth directory from sys.path
@@ -41,8 +43,15 @@ logging.basicConfig(level=logging.DEBUG,
 class Admin(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
+    
     def show(self):
         self.lift()
+        
+    def connect_to_db(self):
+        global conn, cursor
+        db_file = connect.db_path(3)
+        conn = connect.create_connection(db_file)
+        cursor = conn.cursor()
 
 class Homepage(Admin):
    def __init__(self, *args, **kwargs):
@@ -174,16 +183,43 @@ class Add(Admin):
        self.lbl_add.grid(row=0, sticky="e")
        
                 #==============================BUTTON WIDGETS=================================
-       self.btn_add_patient = tk.Button(self.Form, text="Add Patient", width=45, command=self.add_patient, fg='blue')
+       self.btn_add_patient = tk.Button(self.Form, text="Add Patient", width=45, command=self.add_patient_info, fg='blue')
        self.btn_add_patient.grid(pady=25, row=1, columnspan=2)
-       self.btn_add_gp = tk.Button(self.Form, text="Add GP", width=45, command=self.add_gp, fg='green')
+       self.btn_add_gp = tk.Button(self.Form, text="Add GP", width=45, command=self.add_gp_info, fg='green')
        self.btn_add_gp.grid(pady=25, row=2, columnspan=2)
    
-   def add_patient(self):
-       pass
+   def add_patient_info(self):
+       global patient_info
+       top = tk.Toplevel()
+       patient_info = outter_scroll_frame.ScrolledFrame(top)
+       top.title("Register a new Patient")
+       patient_info.pack(side="top", fill="both", expand=True)
+       width = 800
+       height = 700
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+
    
-   def add_gp(self):
-       pass
+   def add_gp_info(self):
+       global gp_info
+       top = tk.Toplevel()
+       gp_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       
+       titles = ['GP first name', 'GP last name', 'GP email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number']
+       add_user.Add_info(gp_info.inner, titles)
+        
+       top.title("Add a new GP to the eHealth system")
+       gp_info.pack(side="top", fill="both", expand=True)
+       width = 800
+       height = 700
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
 
 
 
@@ -223,11 +259,6 @@ class MainView(tk.Frame):
 
         home.show()
         
-    def connect_to_db(self):
-        global conn, cursor
-        db_file = connect.db_path(3)
-        conn = connect.create_connection(db_file)
-        cursor = conn.cursor()
     
     def logout(self):
         print('Admin logged out. Widgets destroyed')
