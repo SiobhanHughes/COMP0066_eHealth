@@ -4,9 +4,10 @@
 import tkinter as tk
 from random import randint
 
-# --- classes ---
 
 class ScrolledFrame(tk.Frame):
+    
+    """ Scrolling Frame - add widgets to innner"""
 
     def __init__(self, parent, vertical=True, horizontal=False):
         super().__init__(parent)

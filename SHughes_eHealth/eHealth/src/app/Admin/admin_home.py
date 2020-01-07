@@ -59,20 +59,20 @@ class Homepage(Admin):
        self.Form.pack(side=tk.TOP, pady=20)
 
                 #==============================LABELS=========================================
-       self.lbl_email = tk.Label(self.Form, text = "Send 24h appointment reminder email", font=('arial', 14), bd=15, fg='blue')
-       self.lbl_email.grid(row=0, sticky="e")
+       self.lbl_remind = tk.Label(self.Form, text = "Send 24h appointment reminder email", font=('arial', 14), bd=15, fg='blue')
+       self.lbl_remind.grid(row=0, sticky="e")
        self.lbl_text = tk.Label(self.Form) #error messages appear here
        self.lbl_text.grid(row=2, columnspan=2)
-       self.lbl_password = tk.Label(self.Form, text = "SEARCH", font=('arial', 14), bd=15, fg='green')
-       self.lbl_password.grid(row=3, sticky="e")
-       self.lbl_password = tk.Label(self.Form, text = "Patient First Name:", font=('arial', 14), bd=15)
-       self.lbl_password.grid(row=4, sticky="e")
-       self.lbl_password = tk.Label(self.Form, text = "Patient Last Name:", font=('arial', 14), bd=15)
-       self.lbl_password.grid(row=4, column= 1,sticky="e")
-       self.lbl_password = tk.Label(self.Form, text = "GP First Name:", font=('arial', 14), bd=15)
-       self.lbl_password.grid(row=6, sticky="e")
-       self.lbl_password = tk.Label(self.Form, text = "GP Last Name:", font=('arial', 14), bd=15)
-       self.lbl_password.grid(row=6, column= 1,sticky="e")
+       self.lbl_search = tk.Label(self.Form, text = "SEARCH", font=('arial', 14), bd=15, fg='green')
+       self.lbl_search.grid(row=3, sticky="e")
+       self.lbl_pfname = tk.Label(self.Form, text = "Patient First Name:", font=('arial', 14), bd=15)
+       self.lbl_pfname.grid(row=4, sticky="e")
+       self.lbl_plname = tk.Label(self.Form, text = "Patient Last Name:", font=('arial', 14), bd=15)
+       self.lbl_plname.grid(row=4, column= 1,sticky="e")
+       self.lbl_gpfname = tk.Label(self.Form, text = "GP First Name:", font=('arial', 14), bd=15)
+       self.lbl_gpfname.grid(row=6, sticky="e")
+       self.lbl_gplname = tk.Label(self.Form, text = "GP Last Name:", font=('arial', 14), bd=15)
+       self.lbl_gplname.grid(row=6, column= 1,sticky="e")
 
 
                 #==============================ENTRY WIDGETS==================================
@@ -115,14 +115,14 @@ class Edit(Admin):
         self.Form.pack(side=tk.TOP, pady=20)
 
                  #==============================LABELS=========================================
-        self.lbl_password = tk.Label(self.Form, text = "EDIT: enter a Patient or GP id number (use the search function)", font=('arial', 14), bd=15, fg='green')
-        self.lbl_password.grid(row=0, sticky="e")
+        self.lbl_edit = tk.Label(self.Form, text = "EDIT: enter a Patient or GP id number (use the search function)", font=('arial', 14), bd=15, fg='green')
+        self.lbl_edit.grid(row=0, sticky="e")
         self.lbl_text = tk.Label(self.Form) #error messages appear here
         self.lbl_text.grid(row=1, columnspan=2)
-        self.lbl_password = tk.Label(self.Form, text = "Patient id:", font=('arial', 14), bd=15)
-        self.lbl_password.grid(row=2, sticky="w")
-        self.lbl_password = tk.Label(self.Form, text = "GP id:", font=('arial', 14), bd=15)
-        self.lbl_password.grid(row=4, sticky="w")
+        self.lbl_pid = tk.Label(self.Form, text = "Patient id:", font=('arial', 14), bd=15)
+        self.lbl_pid.grid(row=2, sticky="w")
+        self.lbl_gpid = tk.Label(self.Form, text = "GP id:", font=('arial', 14), bd=15)
+        self.lbl_gpid.grid(row=4, sticky="w")
 
 
                  #==============================ENTRY WIDGETS==================================
@@ -141,7 +141,18 @@ class Edit(Admin):
 
     
     def edit(self):
-        pass
+        global edit_info_win
+        top = tk.Toplevel()
+        edit_info_win = outter_scroll_frame.ScrolledFrame(top)
+        top.title("Edit Information")
+        edit_info_win.pack(side="top", fill="both", expand=True)
+        width = 800
+        height = 700
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+        x = (screen_width/2) - (width/2)
+        y = (screen_height/2) - (height/2)
+        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
     
     def delete(self):
         pass
@@ -150,18 +161,31 @@ class Edit(Admin):
         pass
        
 
-class Register_Patient(Admin):
+class Add(Admin):
    def __init__(self, *args, **kwargs):
        Admin.__init__(self, *args, **kwargs)
-       scroll_win = outter_scroll_frame.ScrolledFrame(self)
-       label = tk.Label(self, text="This is Admin 2")
-       label.pack(side="top", fill="both", expand=True)
 
-class Add_GP(Admin):
-   def __init__(self, *args, **kwargs):
-       Admin.__init__(self, *args, **kwargs)
-       label = tk.Label(self, text="This is Admin 3")
-       label.pack(side="top", fill="both", expand=True)
+            #==============================FRAMES=========================================
+       self.Form = tk.Frame(self, height=200)
+       self.Form.pack(side=tk.TOP, pady=20)
+       
+                #==============================LABELS=========================================
+       self.lbl_add = tk.Label(self.Form, text = "Add a new Patient or GP to the eHealth system", font=('arial', 14), bd=15)
+       self.lbl_add.grid(row=0, sticky="e")
+       
+                #==============================BUTTON WIDGETS=================================
+       self.btn_add_patient = tk.Button(self.Form, text="Add Patient", width=45, command=self.add_patient, fg='blue')
+       self.btn_add_patient.grid(pady=25, row=1, columnspan=2)
+       self.btn_add_gp = tk.Button(self.Form, text="Add GP", width=45, command=self.add_gp, fg='green')
+       self.btn_add_gp.grid(pady=25, row=2, columnspan=2)
+   
+   def add_patient(self):
+       pass
+   
+   def add_gp(self):
+       pass
+
+
 
 class MainView(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -178,26 +202,22 @@ class MainView(tk.Frame):
         container.pack(side="top", fill="both", expand=True)
         
         home = Homepage(self)
+        add_to_system = Add(self)
         edit = Edit(self)
-        new_patient = Register_Patient(self)
-        new_gp = Add_GP(self)
     
         home.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
+        add_to_system.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
         edit.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        new_patient.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        new_gp.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
         btn_home = tk.Button(buttonframe, text="Home", command=home.lift)
+        btn_add_to_system = tk.Button(buttonframe, text="Add", command=add_to_system.lift)
         btn_edit = tk.Button(buttonframe, text="Edit", command=edit.lift)
-        btn_patient = tk.Button(buttonframe, text="Register Patient", command=new_patient.lift)
-        btn_gp = tk.Button(buttonframe, text="Add GP", command=new_gp.lift)
         
         btn_logout = tk.Button(buttonframe, text='logout', command=self.logout, fg='red')
 
         btn_home.pack(side="left")
+        btn_add_to_system.pack(side="left")
         btn_edit.pack(side="left")
-        btn_patient.pack(side="left")
-        btn_gp.pack(side="left")
 
         btn_logout.pack(side="right")
 

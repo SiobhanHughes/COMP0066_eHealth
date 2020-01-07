@@ -6,3 +6,5 @@
 2020-01-07 15:52:05,537 - admin_home - INFO - Admin logged out. Widgets destroyed
 2020-01-07 15:52:05,539 - admin_home - INFO - user.pickle deleted - new user can log in
 2020-01-07 15:52:10,628 - login - INFO - Application closed
+2020-01-07 17:10:51,778 - admin_home - INFO - Admin logged out. Widgets destroyed
+2020-01-07 17:10:51,779 - admin_home - INFO - user.pickle deleted - new user can log in
