@@ -15,6 +15,8 @@ import logging
 import sqlite3
 from sqlite3 import Error
 
+import datetime
+
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
 # delete file path for eHealth directory from sys.path
@@ -29,35 +31,26 @@ from src.app.GUI import outter_scroll_frame
 path.delete_dir()
 
 
-class Edit_info(tk.Frame):
-    """ Get GP or Patient information from the database.
-        Allow Admin to edit the information and save to the database """
+class Add_time(tk.Frame):
+    """ GGP adds availability for apppointments """
         
-    def __init__(self, parent, titles, user_type, user_id, *args, **kwargs):
+    def __init__(self, parent, dates, *args, **kwargs):
         self.parent = parent
-        self.titles = titles
-        self.user_id = user_id
-        self.user_type = user_type
-        
-        
-        #mechanism to test that only one id is entered, it is correct and determine if gp or patient
-        #sql queries needed 
-        #self.select(self.type, self.id)
-        self.info = self.select_gp(user_id)
-        self.create_widgets(self.titles, self.info)
+        self.dates = self.get_dates(dates)
+        #get dates for which GP wants to enter availability
+        self.create_widgets(self.dates)
     
-    def create_widgets(self, titles, info):
+    def create_widgets(self, dates):
         self.entries = []
-        for i in range(len(titles)):
-            title = titles[i]
-            self.labelframe = tk.LabelFrame(self.parent, text='Edit user')
+        for i in range(len(dates)):
+            date = dates[i]
+            self.labelframe = tk.LabelFrame(self.parent, text='Add Availability')
             self.labelframe.pack(fill="both", expand=True)
     
-            self.label = tk.Label(self.labelframe, text=title)
+            self.label = tk.Label(self.labelframe, text=date)
             self.label.pack(expand=True, fill='both')
     
             self.entry = tk.Entry(self.labelframe, )
-            self.entry.insert(0, info[i])
             self.entry.pack()
             self.entries.append(self.entry)
         
@@ -70,6 +63,39 @@ class Edit_info(tk.Frame):
         self.button = tk.Button(self.labelframe, text="Save", command=self.get_input, fg='blue')
         self.button.pack()
 
+    @staticmethod
+    def get_dates(dates):
+        #get all dates between start date and end date as a list
+        #need to check dates correcty entered!! Separate utitlites for this as need to check all date formats entered - see lab sheets
+        d = dates.split(',') #'DD-MM,DD-MM' string - need to check this entry!!!
+        start = d[0].split('-')
+        end = d[1].split('-')
+        now = datetime.datetime.now()
+        
+        start_date = datetime.date(now.year, int(start[1]), int(start[0]))
+        end_date = datetime.date(now.year, int(end[1]), int(end[0]))
+        
+        date_range = Add_time.genDate(start_date, end_date)
+        dates = []
+        for i in date_range:
+            dates.append(i)
+        print(dates)
+        for i in dates:
+            print(i)
+        return dates
+            
+            
+        
+    @staticmethod   
+    def genDate(start, end):
+        next = start
+        i = 0
+        while (next < end):
+            next = start + datetime.timedelta(days=i)
+            yield next
+            i +=1
+        
+        
     
     def connect_to_db(self):
         global conn, cursor
@@ -108,8 +134,6 @@ class Edit_info(tk.Frame):
         
 if __name__ == '__main__':
     root = tk.Tk()
-    titles = ['GP first name', 'GP last name', 'GP email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number']
-    user_type = 'GP'
-    gpid = 1
-    Edit_info(root, titles, user_type, gpid)
+    dates = ('08-01,01-02')
+    Add_time(root, dates)
     root.mainloop()
