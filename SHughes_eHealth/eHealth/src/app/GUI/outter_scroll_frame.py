@@ -49,46 +49,14 @@ class ScrolledFrame(tk.Frame):
         self._canvas.configure(scrollregion=self._canvas.bbox('all'))
 
 
-class Question:
-
-    def __init__(self, parent, question, answer):
-        self.parent = parent
-        self.question = question
-        self.answer = answer
-        self.create_widgets()
-
-    def get_input(self):
-        value = self.entry.get()
-        print('value:', value)
-        if value == self.answer:
-            print("Esatto. è " + self.answer)
-            self.label['text'] = "Esatto"
-
-    def create_widgets(self):
-        self.labelframe = tk.LabelFrame(self.parent, text="Domanda:")
-        self.labelframe.pack(fill="both", expand=True)
-
-        self.label = tk.Label(self.labelframe, text=self.question)
-        self.label.pack(expand=True, fill='both')
-
-        self.entry = tk.Entry(self.labelframe)
-        self.entry.pack()
-
-        self.button = tk.Button(self.labelframe, text="Click", command=self.get_input)
-        self.button.pack()
 
 # --- main ---
 if __name__ == '__main__':
     root = tk.Tk()
-    root.title("Quiz")
+    root.title("Scroll Frame Template")
     root.geometry("400x300")
 
     window = ScrolledFrame(root)
     window.pack(expand=True, fill='both')
-
-    for i in range(10):
-        one = randint(1, 10)
-        two = randint(1, 10)
-        Question(window.inner, "Quanto fa {} + {} ?".format(one, two), str(one + two))
 
     root.mainloop()

@@ -5,6 +5,9 @@
 import tkinter as tk
 
 class Add_info(tk.Frame):
+    """ Generate form for add a new GP or Patient to the ehealth system.
+        Admin can enter all detales in the required fields and save the information to the database"""
+    
     def __init__(self, parent, titles, *args, **kwargs):
         self.parent = parent
         self.titles = titles
@@ -28,17 +31,26 @@ class Add_info(tk.Frame):
         self.label.pack(expand=True, fill='both')
         self.label = tk.Label(self.labelframe, text='Save all details', fg='blue')
         self.label.pack(expand=True, fill='both')
+        self.lbl_text = tk.Label(self.labelframe) #error messages appear here
+        self.lbl_text.pack(expand=True, fill='both')
         self.button = tk.Button(self.labelframe, text="Save", command=self.get_input, fg='blue')
         self.button.pack()
 
     def get_input(self):
         info = []
         for entry in self.entries:
-            info.append(entry.get().strip())
+            val = entry.get().strip()
+            if val != '':
+                info.append(val)
         print(info)
-        self.save()
+        #call tests - if not errors, then save
+        if len(info) != len(self.titles):
+            self.lbl_text.config(text="Some data is missing", fg="red")
+        else:
+            self.save()
     
     def save(self):
+        #send automatic email to GP or Patient
         for widget in self.labelframe.winfo_children():
             widget.destroy()
     

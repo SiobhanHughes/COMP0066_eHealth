@@ -16,6 +16,7 @@ import sqlite3
 from sqlite3 import Error
 
 import add_user
+import edit_user
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -189,10 +190,17 @@ class Add(Admin):
        self.btn_add_gp.grid(pady=25, row=2, columnspan=2)
    
    def add_patient_info(self):
-       global patient_info
        top = tk.Toplevel()
-       patient_info = outter_scroll_frame.ScrolledFrame(top)
-       top.title("Register a new Patient")
+       patient_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       
+       titles = ['Patient first name', 'Patient last name', 'Patient email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number'
+                 'Emergency contact first name', 'Emergency contact last name', 'Emergency contact email', 'Emergency contact -  Address: street'
+                 'Emergency contact -  Address: city', 'Emergency contact -  Address: postcode', 'Emergency contact -  Telephone number', 'Emergency contact -  Relationship',
+                 'NHS number', 'DOB (YYYY-MM-DD)', 'Drug allgergies', 'Medical Conditions', 'Disabilities', 'Smoker',
+                 'Alcohol - Units per week', 'Exercise']
+       add_user.Add_info(patient_info.inner, titles) #add entry widgets for details in the list above
+        
+       top.title("Add a new Patient to the eHealth system")
        patient_info.pack(side="top", fill="both", expand=True)
        width = 800
        height = 700
@@ -204,12 +212,11 @@ class Add(Admin):
 
    
    def add_gp_info(self):
-       global gp_info
        top = tk.Toplevel()
        gp_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
        
        titles = ['GP first name', 'GP last name', 'GP email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number']
-       add_user.Add_info(gp_info.inner, titles)
+       add_user.Add_info(gp_info.inner, titles)#add entry widgets for details in the list above
         
        top.title("Add a new GP to the eHealth system")
        gp_info.pack(side="top", fill="both", expand=True)
