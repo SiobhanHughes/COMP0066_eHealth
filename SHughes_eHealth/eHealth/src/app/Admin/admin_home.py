@@ -4,7 +4,6 @@
 #============================IMPORT============================================
 
 import tkinter as tk
-from tkinter import ttk
 
 import os
 import sys
@@ -14,9 +13,6 @@ import logging
 
 import sqlite3
 from sqlite3 import Error
-
-import add_user
-import edit_user
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -30,6 +26,7 @@ from src.database import connect
 from src.utilities import track_user as track
 from src.app.GUI import outter_scroll_frame
 from src.app.GUI import search_results_window
+from src.app.GUI import user_info
 path.delete_dir()
 
 
@@ -161,7 +158,7 @@ class Homepage(Admin):
            else:
                self.lbl_text.config(text="Error: No such GP found", fg="red")
        else:
-           gp3 = dbu.search_patient_fullname(conn, (first, last))
+           gp3 = dbu.search_gp_fullname(conn, (first, last))
            if gp3 != []:
                self.patient_search_result(titles, gp3)
            else:
@@ -176,10 +173,10 @@ class Homepage(Admin):
    
    def patient_search_result(self, titles, patient):
        top = tk.Toplevel()
-       win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
-       search_results_window.Search_results(win.inner, titles, patient)
+       patient_win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       patient_info = search_results_window.Search_results(patient_win.inner, titles, patient)
        top.title("Patient Search Results")
-       win.pack(side="top", fill="both", expand=True)
+       patient_win.pack(side="top", fill="both", expand=True)
        width = 1100
        height = 400
        screen_width = self.master.winfo_screenwidth()
@@ -190,10 +187,10 @@ class Homepage(Admin):
        
    def gp_search_result(self, titles, gp):
        top = tk.Toplevel()
-       win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
-       search_results_window.Search_results(win.inner, titles, gp)
+       gp_win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       gp_info = search_results_window.Search_results(gp_win.inner, titles, gp)
        top.title("GP Search Results")
-       win.pack(side="top", fill="both", expand=True)
+       gp_win.pack(side="top", fill="both", expand=True)
        width = 1100
        height = 400
        screen_width = self.master.winfo_screenwidth()
@@ -233,16 +230,23 @@ class Edit(Admin):
         self.gp_id.grid(row=5)
 
                  #==============================BUTTON WIDGETS=================================
-        self.btn_edit = tk.Button(self.Form, text="Edit", width=45, command=self.edit, fg='green')
-        self.btn_edit.grid(pady=25, row=6, columnspan=2)
+        self.btn_view = tk.Button(self.Form, text="View", width=45, command=self.view, fg='green')
+        self.btn_view.grid(pady=25, row=6, columnspan=2)
+        self.btn_edit = tk.Button(self.Form, text="Edit", width=45, command=self.edit, fg='blue')
+        self.btn_edit.grid(pady=25, row=7, columnspan=2)
         self.btn_delete = tk.Button(self.Form, text="Delete", width=45, command=self.delete, fg='red')
-        self.btn_delete.grid(pady=25, row=7, columnspan=2)
-        self.btn_deactivate = tk.Button(self.Form, text="Deactivate", width=45, command=self.deactivate, fg='blue')
-        self.btn_deactivate.grid(pady=25, row=8, columnspan=2)
+        self.btn_delete.grid(pady=25, row=8, columnspan=2)
+        self.btn_deactivate = tk.Button(self.Form, text="Deactivate", width=45, command=self.deactivate)
+        self.btn_deactivate.grid(pady=25, row=9, columnspan=2)
 
     
+    def get_id(self):
+        pass
+    
+    def view(self):
+        pass
+    
     def edit(self):
-        global edit_info_win
         top = tk.Toplevel()
         edit_info_win = outter_scroll_frame.ScrolledFrame(top)
         top.title("Edit Information")
@@ -289,7 +293,7 @@ class Add(Admin):
                  'Emergency contact -  Address: city', 'Emergency contact -  Address: postcode', 'Emergency contact -  Telephone number', 'Emergency contact -  Relationship',
                  'NHS number', 'DOB (YYYY-MM-DD)', 'Drug allgergies', 'Medical Conditions', 'Disabilities', 'Smoker',
                  'Alcohol - Units per week', 'Exercise']
-       add_user.Add_info(patient_info.inner, titles) #add entry widgets for details in the list above
+       patient = user_info.Info_form(patient_info.inner, titles) #add entry widgets for details in the list above
         
        top.title("Add a new Patient to the eHealth system")
        patient_info.pack(side="top", fill="both", expand=True)
@@ -307,7 +311,7 @@ class Add(Admin):
        gp_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
        
        titles = ['GP first name', 'GP last name', 'GP email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number']
-       add_user.Add_info(gp_info.inner, titles)#add entry widgets for details in the list above
+       gp = user_info.Info_form(gp_info.inner, titles)#add entry widgets for details in the list above
         
        top.title("Add a new GP to the eHealth system")
        gp_info.pack(side="top", fill="both", expand=True)

@@ -2,7 +2,6 @@
 #https://stackoverflow.com/questions/47727404/how-to-add-a-scrollbar-to-window-made-with-tkinter
 
 import tkinter as tk
-from random import randint
 
 
 class ScrolledFrame(tk.Frame):

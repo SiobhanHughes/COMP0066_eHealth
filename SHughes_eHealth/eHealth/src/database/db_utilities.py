@@ -208,16 +208,15 @@ def search_patient_lname(conn, lname):
         print(e)
     
     return rows
-        
-        
+
 def search_patient_fullname(conn, fullname):
     """
-    Search and retrieve patient information using patient first and last name
+    Search and retrieve patient information using patient full name
     :param conn: Connection object
-    :params patient first and last name:
+    :params patient full name:
     return patient information
     """
-    sql = ''' SELECT p.patientid, fname, lname, email, DOB, NHSno, street, city, postcode, tel, active
+    sql = ''' SELECT fname, lname, email, street, city, postcode, tel, DOB, NHSno, street, city, postcode, tel, active
               FROM Patients p, Patient_Record pr
               WHERE p.patientid = pr.patientid
               AND fname = ?
@@ -231,6 +230,32 @@ def search_patient_fullname(conn, fullname):
         print(e)
         
     return rows
+        
+        
+def search_patient_id(conn, patientid):
+    """
+    Search and retrieve patient information using patient id
+    :param conn: Connection object
+    :params patientid:
+    return patient information
+    """
+    sql = ''' SELECT fname, lname, email, DOB, NHSno, street, city, postcode, tel,
+                    contact_fname, contact_lname, contact_email, contact_street, contact_city, contact_postcode,
+                    contact_tell, contact_relationship, NHSno, DOB, drug_allergies, medical_conditions, disabilities,
+                    smoker, alcohol_units_per_week, exercise
+              FROM Patients p, Patient_Record pr
+              WHERE p.patientid = pr.patientid
+              AND p.patientid = ? '''
+
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (patientid,))
+        row = cur.fetchone()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return row
 
 
 #==============================Search GP======================================
@@ -296,3 +321,22 @@ def search_gp_fullname(conn, fullname):
         
     return rows
 
+def search_gp_id(conn, gpid):
+    """
+    Search and retrieve GP information using GP id
+    :param conn: Connection object
+    :params gpid:
+    return GP information
+    """
+    sql = ''' SELECT fname, lname, email, street, city, postcode, tel
+              FROM GPs
+              WHERE gpid = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (gpid,))
+        row = cur.fetchone()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return row
