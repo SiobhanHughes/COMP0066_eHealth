@@ -13,11 +13,13 @@ class Search_results:
         self.display_result(self.titles, self.rows)
         
     def display_result(self, titles, rows):
+        for x in range(len(rows)):
+            self.labelframe = tk.LabelFrame(self.parent)
+            self.labelframe.pack(fill="both", expand=True)
             for i in range(len(titles)):
-                tk.Label(self.parent, text=titles[i]).grid(row=0, column=i)
-                for i in range(len(rows)):
-                    for j in range(len(titles)):
-                        tk.Label(self.parent, text=rows[i][j]).grid(row=i+1, column=j)
+                tk.Label(self.labelframe, text=titles[i]).grid(row=0, column=i)
+                for j in range(len(titles)):
+                    tk.Label(self.labelframe, text=rows[x][j]).grid(row=1, column=j)
                 
 if __name__ == '__main__':
     root = tk.Tk()

@@ -176,8 +176,10 @@ class Homepage(Admin):
    
    def patient_search_result(self, titles, patient):
        top = tk.Toplevel()
-       search_results_window.Search_results(top, titles, patient)
+       win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       search_results_window.Search_results(win.inner, titles, patient)
        top.title("Patient Search Results")
+       win.pack(side="top", fill="both", expand=True)
        width = 1100
        height = 400
        screen_width = self.master.winfo_screenwidth()
@@ -188,8 +190,10 @@ class Homepage(Admin):
        
    def gp_search_result(self, titles, gp):
        top = tk.Toplevel()
-       search_results_window.Search_results(top, titles, gp)
+       win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       search_results_window.Search_results(win.inner, titles, gp)
        top.title("GP Search Results")
+       win.pack(side="top", fill="both", expand=True)
        width = 1100
        height = 400
        screen_width = self.master.winfo_screenwidth()
