@@ -164,3 +164,135 @@ def cancel_appointment(conn, cancel):
         conn.commit()
     except Error as e:
         print(e)
+        
+        
+#==============================Search Patient======================================
+def search_patient_fname(conn, fname):
+    """
+    Search and retrieve patient information using patient first name
+    :param conn: Connection object
+    :params patient first name:
+    return patient information
+    """
+    sql = ''' SELECT p.patientid, fname, lname, email, DOB, NHSno, street, city, postcode, tel, active
+              FROM Patients p, Patient_Record pr
+              WHERE p.patientid = pr.patientid
+              AND fname = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (fname,))
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return rows
+
+def search_patient_lname(conn, lname):
+    """
+    Search and retrieve patient information using patient last name
+    :param conn: Connection object
+    :params patient last name:
+    return patient information
+    """
+    sql = ''' SELECT p.patientid, fname, lname, email, DOB, NHSno, street, city, postcode, tel, active
+              FROM Patients p, Patient_Record pr
+              WHERE p.patientid = pr.patientid
+              AND lname = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (lname,))
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+    
+    return rows
+        
+        
+def search_patient_fullname(conn, fullname):
+    """
+    Search and retrieve patient information using patient first and last name
+    :param conn: Connection object
+    :params patient first and last name:
+    return patient information
+    """
+    sql = ''' SELECT p.patientid, fname, lname, email, DOB, NHSno, street, city, postcode, tel, active
+              FROM Patients p, Patient_Record pr
+              WHERE p.patientid = pr.patientid
+              AND fname = ?
+              AND lname = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, fullname)
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return rows
+
+
+#==============================Search GP======================================
+def search_gp_fname(conn, fname):
+    """
+    Search and retrieve GP information using GP first name
+    :param conn: Connection object
+    :params GP first name:
+    return GP information
+    """
+    sql = ''' SELECT gpid, fname, lname, email, street, city, postcode, tel, active
+              FROM GPs
+              WHERE fname = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (fname,))
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return rows
+
+def search_gp_lname(conn, lname):
+    """
+    Search and retrieve GP information using GP last name
+    :param conn: Connection object
+    :params GP last name:
+    return GP information
+    """
+    sql = ''' SELECT gpid, fname, lname, email, street, city, postcode, tel, active
+              FROM GPs
+              WHERE lname = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (lname,))
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+    
+    return rows
+        
+        
+def search_gp_fullname(conn, fullname):
+    """
+    Search and retrieve GP information using GP first and last name
+    :param conn: Connection object
+    :params GP first and last name:
+    return GP information
+    """
+    sql = ''' SELECT gpid, fname, lname, email, street, city, postcode, tel, active
+              FROM GPs
+              WHERE fname = ?
+              AND lname = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, fullname)
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return rows
+

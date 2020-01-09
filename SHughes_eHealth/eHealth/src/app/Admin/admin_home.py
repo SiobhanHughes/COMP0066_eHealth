@@ -29,6 +29,7 @@ from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
 from src.app.GUI import outter_scroll_frame
+from src.app.GUI import search_results_window
 path.delete_dir()
 
 
@@ -80,37 +81,123 @@ class Homepage(Admin):
        self.lbl_plname = tk.Label(self.Form, text = "Patient Last Name:", font=('arial', 14), bd=15)
        self.lbl_plname.grid(row=4, column= 1,sticky="e")
        self.lbl_gpfname = tk.Label(self.Form, text = "GP First Name:", font=('arial', 14), bd=15)
-       self.lbl_gpfname.grid(row=6, sticky="e")
+       self.lbl_gpfname.grid(row=7, sticky="e")
        self.lbl_gplname = tk.Label(self.Form, text = "GP Last Name:", font=('arial', 14), bd=15)
-       self.lbl_gplname.grid(row=6, column= 1,sticky="e")
+       self.lbl_gplname.grid(row=7, column= 1,sticky="e")
 
 
                 #==============================ENTRY WIDGETS==================================
-       self.patient_fname = tk.Entry(self.Form, textvariable=self.patient_fname, font=(14))
-       self.patient_fname.grid(row=5)
-       self.patient_lname = tk.Entry(self.Form, textvariable=self.patient_lname, font=(14))
-       self.patient_lname.grid(row=5, column=1)
-       self.gp_fname = tk.Entry(self.Form, textvariable=self.gp_fname, font=(14))
-       self.gp_fname.grid(row=7)
-       self.gp_lname = tk.Entry(self.Form, textvariable=self.gp_lname, font=(14))
-       self.gp_lname.grid(row=7, column=1)
+       self.enter_patient_fname = tk.Entry(self.Form, textvariable=self.patient_fname, font=(14))
+       self.enter_patient_fname.grid(row=5)
+       self.enter_patient_lname = tk.Entry(self.Form, textvariable=self.patient_lname, font=(14))
+       self.enter_patient_lname.grid(row=5, column=1)
+       self.enter_gp_fname = tk.Entry(self.Form, textvariable=self.gp_fname, font=(14))
+       self.enter_gp_fname.grid(row=8)
+       self.enter_gp_lname = tk.Entry(self.Form, textvariable=self.gp_lname, font=(14))
+       self.enter_gp_lname.grid(row=8, column=1)
 
                 #==============================BUTTON WIDGETS=================================
        self.btn_email = tk.Button(self.Form, text="email", width=45, command=self.reminder_email, fg='blue')
        self.btn_email.grid(pady=25, row=1, columnspan=2)
-       self.btn_search = tk.Button(self.Form, text="Search", width=45, command=self.search, fg='green')
-       self.btn_search.grid(pady=25, row=8, columnspan=2)
-       self.btn_clear = tk.Button(self.Form, text="Clear all fields", width=45, command=self.search, fg='green')
-       self.btn_clear.grid(pady=25, row=9, columnspan=2)
+       self.btn_search_p = tk.Button(self.Form, text="Search Patients", width=45, command=self.search_patient, fg='green')
+       self.btn_search_p.grid(pady=25, row=6, columnspan=2)
+       self.btn_search_gp = tk.Button(self.Form, text="Search GPs", width=45, command=self.search_gp, fg='green')
+       self.btn_search_gp.grid(pady=25, row=9, columnspan=2)
+       self.btn_clear = tk.Button(self.Form, text="Clear all fields", width=45, command=self.clear)
+       self.btn_clear.grid(pady=25, row=10, columnspan=2)
        
-   def reminder_email(self):
+   def reminder_email(self):  #complete this!!!
        pass
    
-   def search(self):
-       pass
+   def search_patient(self):
+       first = self.patient_fname.get().strip()
+       last = self.patient_lname.get().strip()
+       titles = ['Patient id','Patient first name', 'Patient last name', 'email', 'DOB', 'NHSno', 'street', 'city', 'postcode', 'tel', 'active' ]
+       if first == '' and last == '':
+           self.lbl_text.config(text="No Patient name to search!", fg="red")
+       else:
+        self.connect_to_db()
+        if first != '' and last == '':
+            p1 = dbu.search_patient_fname(conn, first)
+            if p1 != []:
+                self.patient_search_result(titles, p1)
+                print(p1)
+            else:
+                self.lbl_text.config(text="Error: No such Patient found", fg="red")
+        elif first == '' and last != '':
+            p2 = dbu.search_patient_lname(conn, last)
+            if p2 != []:
+                self.patient_search_result(titles, p2)
+            else:
+                self.lbl_text.config(text="Error: No such Patient found", fg="red")
+        else:
+            p3 = dbu.search_patient_fullname(conn, (first, last))
+            if p3 != []:
+                self.patient_search_result(titles, p3)
+            else:
+                self.lbl_text.config(text="Error: No such Patient found", fg="red")
+        conn.close()
+
+   
+   def search_gp(self):
+       first = self.gp_fname.get().strip()
+       last = self.gp_lname.get().strip()
+       titles = ['GP id','GP first name', 'GP last name', 'email', 'street', 'city', 'postcode', 'tel', 'active' ]
+       if first == '' and last == '':
+           self.lbl_text.config(text="No GP name to search!", fg="red")
+       else:
+           self.connect_to_db()
+       if first != '' and last == '':
+           gp1 = dbu.search_gp_fname(conn, first)
+           if gp1 != []:
+               self.gp_search_result(titles, gp1)
+               print(gp1)
+           else:
+               self.lbl_text.config(text="Error: No such GP found", fg="red")
+       elif first == '' and last != '':
+           gp2 = dbu.search_gp_lname(conn, last)
+           if gp2 != []:
+               self.gp_search_result(titles, gp2)
+           else:
+               self.lbl_text.config(text="Error: No such GP found", fg="red")
+       else:
+           gp3 = dbu.search_patient_fullname(conn, (first, last))
+           if gp3 != []:
+               self.patient_search_result(titles, gp3)
+           else:
+               self.lbl_text.config(text="Error: No such GP found", fg="red")
+       conn.close()
    
    def clear(self):
-       pass
+       self.patient_fname.set("")
+       self.patient_lname.set("")
+       self.gp_fname.set("")
+       self.gp_lname.set("")
+   
+   def patient_search_result(self, titles, patient):
+       top = tk.Toplevel()
+       search_results_window.Search_results(top, titles, patient)
+       top.title("Patient Search Results")
+       width = 1100
+       height = 400
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+       
+   def gp_search_result(self, titles, gp):
+       top = tk.Toplevel()
+       search_results_window.Search_results(top, titles, gp)
+       top.title("GP Search Results")
+       width = 1100
+       height = 400
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+        
 
 class Edit(Admin):
     def __init__(self, *args, **kwargs):

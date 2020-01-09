@@ -4,8 +4,8 @@
 
 import tkinter as tk
 
-class Add_info(tk.Frame):
-    """ Generate form for add a new GP or Patient to the ehealth system.
+class Add_info:
+    """ Generate form for adding a new GP or Patient to the ehealth system.
         Admin can enter all detales in the required fields and save the information to the database"""
     
     def __init__(self, parent, titles, *args, **kwargs):

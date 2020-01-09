@@ -17,11 +17,14 @@ def main():
     gp2 = ('Theresa', 'Chng', 'theresa_chng@gmail.com', 'Orion street', 'London', 'N1', '07658911937', gp2_date)
 
     patient1 = ('Nicola', 'Hughes', 'nhughes@gmail.com', 'Berkeley street', 'London', 'N1', '07878842306', date.today(),
-                'Chalrie', 'Guo', 'cguo@gamil.com', 'Berkeley street', 'London', 'N1', '07869229113', 'husband')
+                'Charlie', 'Guo', 'cguo@gamil.com', 'Berkeley street', 'London', 'N1', '07869229113', 'husband')
 
     patient2_date = date.today() + relativedelta(months=-4)
     patient2 = ('Norman', 'Smith', 'nsmith@gmail.com', 'Packington street', 'London', 'N1', '07988504379', patient2_date,
                 'Damien', 'Smith', 'damien_smith@gamil.com', 'Canary street', 'London', 'N1', '07604482117', 'son')
+    
+    patient3 = ('Nicola', 'Guo', 'nhughes@gmail.com', 'Berkeley street', 'London', 'N1', '07878842306', date.today(),
+                'Charlie', 'Guo', 'cguo@gamil.com', 'Berkeley street', 'London', 'N1', '07869229113', 'husband')
     
     database = connect.db_path(2)
     conn = connect.create_connection(database)
@@ -40,6 +43,10 @@ def main():
         insert_patient2 = db.insert_patient(conn, patient2)
         patient2_record = ('NHS002', insert_patient2, date(1950,8,23), 'none', 'diabetes', 'none', 'no', 0, 'moderate activity level, mainly walking')
         db.insert_patient_record(conn, patient2_record)
+        
+        insert_patient3 = db.insert_patient(conn, patient3)
+        patient3_record = ('NHS003', insert_patient3, date(1984,12,14), 'penecillin', 'none', 'none', 'no', 3, 'gym classes three time a week')
+        db.insert_patient_record(conn, patient3_record)
     
         conn.commit()
     else:
