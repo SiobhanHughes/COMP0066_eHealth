@@ -125,6 +125,61 @@ def insert_appointment(conn, appointment):
 
 
         
+#==============================UPDATE======================================
+
+def update_gp(conn, gp):
+    """
+    Update gp details in the GPs table
+    :param conn: Connection object
+    :param gp: details to be updated and the gpid
+    """
+    sql = ''' UPDATE GPs 
+              SET fname = ?, lname = ?, street = ?, city = ?, postcode = ?, tel = ?
+              WHERE gpid = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, gp)
+        conn.commit()
+    except Error as e:
+        print(e)
+
+def update_patient(conn, patient):
+    """
+    update patient details in the Patients table
+    :param conn: Connection object
+    :param patient: details to be updated and patientid
+    """
+    sql = ''' UPDATE Patients
+              SET fname = ?, lname = ?, street = ?, city = ?, postcode = ?, tel = ?, contact_fname = ?, 
+              contact_lname = ?, contact_email = ?, contact_street = ?, contact_city = ?, contact_postcode = ?, 
+              contact_tel = ?, contact_relationship = ?
+              WHERE patientid = ? '''
+
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, patient)
+        conn.commit()
+    except Error as e:
+        print(e)
+
+def update_patient_record(conn, patient_record):
+    """
+    Update Patient_Record table
+    :param conn: Connection object
+    :param patient_record: details to be updated and patientid
+    """
+    sql = ''' UPDATE Patient_Record
+              SET DOB = ?, drug_allergies = ?, medical_conditions = ?, disabilities = ?, smoker = ?
+              alcohol_units_per_week = ?, exercise = 
+              WHERE patientid = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, patient_record)
+        conn.commit()
+    except Error as e:
+        print(e)
+
+
 #==============================Patient makes appointment======================================
 def book_appointment(conn, book):
     """
@@ -239,9 +294,9 @@ def search_patient_id(conn, patientid):
     :params patientid:
     return patient information
     """
-    sql = ''' SELECT fname, lname, email, DOB, NHSno, street, city, postcode, tel,
+    sql = ''' SELECT fname, lname, email, street, city, postcode, tel,
                     contact_fname, contact_lname, contact_email, contact_street, contact_city, contact_postcode,
-                    contact_tell, contact_relationship, NHSno, DOB, drug_allergies, medical_conditions, disabilities,
+                    contact_tel, contact_relationship, NHSno, DOB, drug_allergies, medical_conditions, disabilities,
                     smoker, alcohol_units_per_week, exercise
               FROM Patients p, Patient_Record pr
               WHERE p.patientid = pr.patientid
@@ -254,7 +309,7 @@ def search_patient_id(conn, patientid):
         conn.commit()
     except Error as e:
         print(e)
-        
+         
     return row
 
 

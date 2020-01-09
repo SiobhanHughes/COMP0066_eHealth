@@ -14,6 +14,9 @@ import logging
 import sqlite3
 from sqlite3 import Error
 
+import datetime as dt
+import re
+
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
 # delete file path for eHealth directory from sys.path
