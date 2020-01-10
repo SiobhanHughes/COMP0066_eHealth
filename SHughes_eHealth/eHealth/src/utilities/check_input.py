@@ -188,12 +188,12 @@ def check_time_format(time):
 def gen_appointments(one_date, time_ranges):
     for key, value in time_ranges.items():
         time_ranges[key].append(one_date)
-        print(time_ranges)
+        #print(time_ranges)
     
     datetime_ranges = {}
     for key, value in time_ranges.items():
         datetime_ranges[key] = [dt.datetime.combine(value[2], value[0]), dt.datetime.combine(value[2], value[1])]
-        print(datetime_ranges)
+        #print(datetime_ranges)
     
     appointments = []
     for key, value in datetime_ranges.items():
@@ -202,17 +202,36 @@ def gen_appointments(one_date, time_ranges):
             appointments.append(next)
             next += dt.timedelta(minutes=15)
     return appointments
-            
+
+def check_date_format(one_date):
+    """ function to check single date is in correct format and convert to date object
+        Parameter: a string in the form YYYY-MM-DD """
+
+    try:
+       nums = one_date.split('-')
+    except:
+        return 'error'
+
+    if len(nums)!= 3:
+        return 'error'
+    
+    try:
+        one_date = dt.date(int(nums[0]), int(nums[1]), int(nums[2]))
+    except:
+        return 'error'
+    else:
+        return one_date
+        
         
 
 if __name__ == '__main__':
     
     #check dates
-    x = check_dates_format('2020-01-10,2020-01-12')
-    print('x: ', x)
+    d, e = check_dates_format('2020-01-10,2020-01-12')
+    print(d, e)
     
     #generate list of dates
-    y = gen_dates(x[0], x[1])
+    y = gen_dates(d, e)
     print("y: ", y)
     for i in y:
         print(i)
@@ -221,13 +240,15 @@ if __name__ == '__main__':
     z = check_time_format('09:00-12:00, 13:00-17:00')
     print('z: ', z)
     
-    #generate appointments for one date only (need to save foe each date) - get date and time
+    # #generate appointments for one date only (need to save foe each date) - get date and time
     test = gen_appointments(dt.date(2020,1,10), z)
     for i in test:
         print(i)
         only_date, only_time =  i.date(), i.time()
         print(only_date)
         print(only_time)
+        
+    print(check_date_format('2020-01-11'))
         
 
 

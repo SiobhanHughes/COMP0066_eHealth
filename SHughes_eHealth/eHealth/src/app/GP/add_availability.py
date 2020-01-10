@@ -15,7 +15,7 @@ import logging
 import sqlite3
 from sqlite3 import Error
 
-import datetime
+import datetime as dt
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -28,6 +28,7 @@ from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
 from src.app.GUI import outter_scroll_frame
+from src.utilities import check_input as check
 path.delete_dir()
 
 
@@ -36,24 +37,36 @@ class Add_time(tk.Frame):
         
     def __init__(self, parent, dates, *args, **kwargs):
         self.parent = parent
-        self.dates = self.get_dates(dates)
+        self.dates = dates
         #get dates for which GP wants to enter availability
         self.create_widgets(self.dates)
     
     def create_widgets(self, dates):
-        self.entries = []
+        self.labelframe = tk.LabelFrame(self.parent)
+        self.labelframe.pack(fill="both", expand=True)
+        self.label = tk.Label(self.labelframe, text='Add time range in the format HH:MM-HH:MM,HH:MM-HH:MM using 24h (separated by comma)')
+        self.label.pack(expand=True, fill='both')
+        self.lbl_text = tk.Label(self.labelframe) #error messages appear here
+        self.lbl_text.pack(expand=True, fill='both')
+        
+        self.times = []
+        self.dates_inserted = []
         for i in range(len(dates)):
             date = dates[i]
-            self.labelframe = tk.LabelFrame(self.parent, text='Add Availability')
+            self.labelframe = tk.LabelFrame(self.parent)
             self.labelframe.pack(fill="both", expand=True)
     
-            self.label = tk.Label(self.labelframe, text=date)
-            self.label.pack(expand=True, fill='both')
+            self.entered_date = tk.Entry(self.labelframe)
+            self.entered_date.pack()
+            self.entered_date.insert(0, date)
+            self.dates_inserted.append(self.entered_date)
     
-            self.entry = tk.Entry(self.labelframe, )
-            self.entry.pack()
-            self.entries.append(self.entry)
+            self.enter_time = tk.Entry(self.labelframe)
+            self.enter_time.pack()
+            self.times.append(self.enter_time)
         
+        self.labelframe = tk.LabelFrame(self.parent)
+        self.labelframe.pack(fill="both", expand=True)
         self.label = tk.Label(self.labelframe)
         self.label.pack(expand=True, fill='both')
         self.label = tk.Label(self.labelframe, text='Save all details', fg='blue')
@@ -63,71 +76,94 @@ class Add_time(tk.Frame):
         self.button = tk.Button(self.labelframe, text="Save", command=self.get_input, fg='blue')
         self.button.pack()
 
-    @staticmethod
-    def get_dates(dates):
-        #get all dates between start date and end date as a list
-        #need to check dates correcty entered!! Separate utitlites for this as need to check all date formats entered - see lab sheets
-        d = dates.split(',') #'DD-MM,DD-MM' string - need to check this entry!!!
-        start = d[0].split('-')
-        end = d[1].split('-')
-        now = datetime.datetime.now()
-        
-        start_date = datetime.date(now.year, int(start[1]), int(start[0]))
-        end_date = datetime.date(now.year, int(end[1]), int(end[0]))
-        
-        date_range = Add_time.genDate(start_date, end_date)
-        dates = []
-        for i in date_range:
-            dates.append(i)
-        print(dates)
-        for i in dates:
-            print(i)
-        return dates
-            
-            
-        
-    @staticmethod   
-    def genDate(start, end):
-        next = start
-        i = 0
-        while (next < end):
-            next = start + datetime.timedelta(days=i)
-            yield next
-            i +=1
-        
-        
+
+
     
     def connect_to_db(self):
         global conn, cursor
         db_file = connect.db_path(3)
         conn = connect.create_connection(db_file)
         cursor = conn.cursor()
-        
-    def select_gp(self, user_id):
-        self.connect_to_db()
-        sql = "SELECT fname, lname, email, street, city, postcode, tel  FROM GPs WHERE gpid = ?"
-        cursor.execute(sql, (user_id,))
-        gp = cursor.fetchone()
-        print(gp)
-        cursor.close()
-        conn.close()
-        return gp
+
     
     def get_input(self):
-        info = []
-        for entry in self.entries:
+        times = self.get_times()
+        print('times entered:', times)       
+        dates = self.get_dates()
+        print('dates entered:', dates)
+        if (dates is not None) and (times is not None):
+            format_dates = self.format_dates(dates)
+            print('dates: ', format_dates)
+            time_ranges = self.format_times(times)
+            print('times: ', time_ranges)
+        
+        #format_dates - pass one date together with time_ranges dictionary to generate appointments for each date (index match)
+            if (format_dates is not None) and (time_ranges is not None):
+                for i in range(len(format_dates)):
+                    appointments = check.gen_appointments(format_dates[i], time_ranges[i])
+                    for i in appointments:
+                        print(i)
+                        only_date, only_time = i.date(), i.time()
+                        print(only_date)
+                        print(only_time)
+                        self.save()
+    
+    def get_times(self):
+        entered_time_ranges= []
+        for entry in self.times:
             val = entry.get().strip()
             if val != '':
-                info.append(val)
-        print(info)
-        #call tests - if not errors, then save
-        if len(info) != len(self.titles):
-            self.lbl_text.config(text="Some data is missing", fg="red")
+                entered_time_ranges.append(val)
+                print('entered times: ', entered_time_ranges)
+        if len(entered_time_ranges) != len(self.dates):
+                self.lbl_text.config(text="Some data is missing", fg="red")
+                return None
         else:
-            self.save()
+            return entered_time_ranges
+        
+    def get_dates(self):
+        date_ranges = []
+        for entry in self.dates_inserted:
+            val = entry.get().strip()
+            if val != '':
+                date_ranges.append(val)
+        if len(date_ranges) != len(self.dates):
+                self.lbl_text.config(text="Some data is missing", fg="red")
+                return None
+        else: 
+            return date_ranges
+    
+    def format_dates(self, dates):
+        format_dates = []
+        for d in dates:
+            one_date = check.check_date_format(d)
+            if one_date == 'error':
+                self.lbl_text.config(text="Error with date formatt (YYYY-MM-DD)", fg="red")
+                return None
+            else:
+                format_dates.append(one_date)
+        if len(format_dates) != len(self.dates):
+            self.lbl_text.config(text="Error: date missing", fg="red")
+            return None
+        else:
+            return format_dates
+        
+    def format_times(self, times):
+        ranges = []
+        for t in times:
+            time_range = check.check_time_format(t)
+            if time_range == 'error':
+                self.lbl_text.config(text="Error: time range not correctly formatted", fg="red")
+                return None
+            else:
+                ranges.append(time_range)
+        if len(ranges) != len(self.dates):
+            self.lbl_text.config(text="Error: times missing or incorrectly formatted", fg="red")
+            return None
+        else:
+            return ranges
     
     def save(self):
-        #send automatic email to GP or Patient
         for widget in self.labelframe.winfo_children():
             widget.destroy()
     

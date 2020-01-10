@@ -17,6 +17,8 @@ from sqlite3 import Error
 import datetime as dt
 import re
 
+import add_availability
+
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
 # delete file path for eHealth directory from sys.path
@@ -65,7 +67,7 @@ class Search(GP):
 class Appointments(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       self.user = track.load('user.pickle', 3)
+       #self.user = track.load('user.pickle', 3)
        
         #==============================VARIABLES======================================
        self.date_range = tk.StringVar()
@@ -77,7 +79,7 @@ class Appointments(GP):
                 #==============================LABELS=========================================
        self.lbl_dates_title = tk.Label(self.Form, text = "Enter a range of dates:", font=('arial', 18), bd=15)
        self.lbl_dates_title.grid(row=0, sticky="w")
-       self.lbl_dates_format = tk.Label(self.Form, text = "Format: YYYY-DD-MM,YYYY-DD-MM (Dates separated by comma)", font=('arial', 14), bd=15)
+       self.lbl_dates_format = tk.Label(self.Form, text = "Format: YYYY-MM-DD,YYYY-MM-DD (Dates separated by comma)", font=('arial', 14), bd=15)
        self.lbl_dates_format.grid(row=1, sticky="w")
        self.lbl_dates_format2 = tk.Label(self.Form, text = "For one day, use the same start and end date", font=('arial', 12), bd=15)
        self.lbl_dates_format2.grid(row=2, sticky="w")
@@ -99,7 +101,42 @@ class Appointments(GP):
        pass
 
    def enter(self):
-       pass
+       dates_entered = self.date_range.get().strip()
+       self.connect_to_db()
+       if check.check_dates_format(dates_entered) == 'error':
+            self.lbl_text.config(text="Error: dates not correctly formatted", fg="red")
+       else:
+           start, end = check.check_dates_format(dates_entered)
+           if start <= dt.date.today():
+               self.lbl_text.config(text="Error: to add appointments you need to enter a date in the furture", fg="red")
+           else:
+               date_range = check.gen_dates(start, end)
+               for d in date_range:
+                   cursor.execute('SELECT * FROM Appointments WHERE date_a = ?', (d,))
+                   row = cursor.fetchall()
+                   if row != []:
+                       self.lbl_text.config(text="Error: You already added availability for some of these dates", fg="red")
+               else:
+                   self.add_availability(date_range)
+       cursor.close()
+       conn.close()
+
+                       
+   def add_availability(self, date_range):
+       top = tk.Toplevel()
+       add_times = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       available = add_availability.Add_time(add_times.inner, date_range)
+       top.title("Add available times for appointments")
+       add_times.pack(side="top", fill="both", expand=True)
+       width = 1100
+       height = 400
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+               
+
 class Patient_Record(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
@@ -135,12 +172,6 @@ class MainView(tk.Frame):
         btn_logout.pack(side="right")
 
         search.show()
-        
-    def connect_to_db(self):
-        global conn, cursor
-        db_file = connect.db_path(3)
-        conn = connect.create_connection(db_file)
-        cursor = conn.cursor()
     
     def logout(self):
         print('GP logged out. Widgets destroyed')
