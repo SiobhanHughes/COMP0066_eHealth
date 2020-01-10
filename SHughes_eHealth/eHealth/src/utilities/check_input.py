@@ -198,30 +198,37 @@ def gen_appointments(one_date, time_ranges):
     appointments = []
     for key, value in datetime_ranges.items():
         next = value[0]
-        while next < value[1]:
-            next += dt.timedelta(minutes=15)
+        while next <= value[1]:
             appointments.append(next)
+            next += dt.timedelta(minutes=15)
     return appointments
             
         
 
 if __name__ == '__main__':
-    x = check_dates_format('2020-01-10,2020-01-12')
-    print(x)
     
+    #check dates
+    x = check_dates_format('2020-01-10,2020-01-12')
+    print('x: ', x)
+    
+    #generate list of dates
     y = gen_dates(x[0], x[1])
-    print(y)
+    print("y: ", y)
     for i in y:
         print(i)
     
-    x = check_time_format('09:00-12:00, 13:00-17:00')
-    for values in x.values():
-        for v in values:
-            print(v)
-    print('x: ', x)
+    #check time range
+    z = check_time_format('09:00-12:00, 13:00-17:00')
+    print('z: ', z)
     
-    z = gen_appointments(dt.date(2020,1,11), x)
-    for i in z:
+    #generate appointments for one date only (need to save foe each date) - get date and time
+    test = gen_appointments(dt.date(2020,1,10), z)
+    for i in test:
         print(i)
-    
+        only_date, only_time =  i.date(), i.time()
+        print(only_date)
+        print(only_time)
+        
+
+
     
