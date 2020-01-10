@@ -65,6 +65,7 @@ class Search(GP):
 class Appointments(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
+       self.user = track.load('user.pickle', 3)
        
         #==============================VARIABLES======================================
        self.date_range = tk.StringVar()

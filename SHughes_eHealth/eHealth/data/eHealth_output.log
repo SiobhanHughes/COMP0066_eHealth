@@ -1,0 +1,9 @@
+2020-01-10 17:39:58,589 - create_account - INFO - Result of sql query to select for GP email: ('jane_allen@gmail.com',)
+2020-01-10 17:39:58,590 - create_account - INFO - Result of sql query to select for Patient email: None
+2020-01-10 17:39:58,677 - create_account - INFO - GP account created
+2020-01-10 17:40:19,824 - login - INFO - Result of sql query for gp email login: (1, 'Jane', 'Allen', 'jane_allen@gmail.com', 'e9b6f29be41e9d40f4f129b4ec08d8bcb71732fdc8f38dae49d9b4292e81b4b410e385f98d7073f31867b012a0bae4b5f75fc5b396892e198c53283bec336304380d1b86ed80e440ce6ce3d224d14bdd3f0f4dc721bc3f9d0132422538a3d4bd', 'yes')
+2020-01-10 17:40:19,825 - login - INFO - Result of sql query for patient email login: None
+2020-01-10 17:40:19,910 - login - INFO - GP logged in.
+2020-01-10 17:40:42,769 - gp_home - INFO - GP logged out. Widgets destroyed
+2020-01-10 17:40:42,770 - gp_home - INFO - user.pickle deleted - new user can log in
+2020-01-10 17:40:45,699 - login - INFO - Application closed

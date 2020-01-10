@@ -163,34 +163,65 @@ def check_time_format(time):
             time_spans[block] = block.split('-')
         except:
             return 'error'
+    for block in time_blocks:
+        if len(time_spans[block]) != 2:
+            return 'error'
+
     for value in time_spans.values():
         try:
             value[0] = value[0].split(':')
             value[1] = value[1].split(':')
         except:
             return 'error'
-    
     for key, value in time_spans.items():
         try:
             time_spans[key] = [dt.time(int(value[0][0]), int(value[0][1])), dt.time(int(value[1][0]), int(value[1][1]))]
         except:
             return 'error'
+        
+    for value in time_spans.values():
+        if value[0] >= value[1]:
+            return 'error'
     
     return time_spans
     
+def gen_appointments(one_date, time_ranges):
+    for key, value in time_ranges.items():
+        time_ranges[key].append(one_date)
+        print(time_ranges)
+    
+    datetime_ranges = {}
+    for key, value in time_ranges.items():
+        datetime_ranges[key] = [dt.datetime.combine(value[2], value[0]), dt.datetime.combine(value[2], value[1])]
+        print(datetime_ranges)
+    
+    appointments = []
+    for key, value in datetime_ranges.items():
+        next = value[0]
+        while next < value[1]:
+            next += dt.timedelta(minutes=15)
+            appointments.append(next)
+    return appointments
+            
+        
 
 if __name__ == '__main__':
-    x = check_dates_format('2020-01-10,2020-01-15')
+    x = check_dates_format('2020-01-10,2020-01-12')
     print(x)
     
-    # y = gen_dates(x[0], x[1])
-    # print(y)
-    # for i in y:
-    #     print(i)
+    y = gen_dates(x[0], x[1])
+    print(y)
+    for i in y:
+        print(i)
     
-    x = check_time_format('09:00-12:00, 13:00-17:00, 19:00-20:00')
+    x = check_time_format('09:00-12:00, 13:00-17:00')
     for values in x.values():
         for v in values:
             print(v)
     print('x: ', x)
+    
+    z = gen_appointments(dt.date(2020,1,11), x)
+    for i in z:
+        print(i)
+    
     
