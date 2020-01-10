@@ -14,6 +14,9 @@ import logging
 import sqlite3
 from sqlite3 import Error
 
+import datetime as dt
+import re
+
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
 # delete file path for eHealth directory from sys.path
@@ -24,7 +27,12 @@ path.insert_dir(eHealth_dir)
 from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
+from src.utilities import check_input as check
+from src.app.GUI import outter_scroll_frame
+from src.app.GUI import search_results_window
+from src.app.GUI import user_info
 path.delete_dir()
+
 
 
 #============================GP HOME interface======================
@@ -38,22 +46,60 @@ logging.basicConfig(level=logging.DEBUG,
 class GP(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
+    
     def show(self):
         self.lift()
+        
+    def connect_to_db(self):
+        global conn, cursor
+        db_file = connect.db_path(3)
+        conn = connect.create_connection(db_file)
+        cursor = conn.cursor()
 
-class GP1(GP):
+class Search(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
        label = tk.Label(self, text="This is GP 1")
        label.pack(side="top", fill="both", expand=True)
 
-class GP2(GP):
+class Appointments(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       label = tk.Label(self, text="This is GP 2")
-       label.pack(side="top", fill="both", expand=True)
+       
+        #==============================VARIABLES======================================
+       self.date_range = tk.StringVar()
 
-class GP3(GP):
+            #==============================FRAMES=========================================
+       self.Form = tk.Frame(self, height=200)
+       self.Form.pack(side=tk.TOP, pady=20)
+
+                #==============================LABELS=========================================
+       self.lbl_dates_title = tk.Label(self.Form, text = "Enter a range of dates:", font=('arial', 18), bd=15)
+       self.lbl_dates_title.grid(row=0, sticky="w")
+       self.lbl_dates_format = tk.Label(self.Form, text = "Format: YYYY-DD-MM,YYYY-DD-MM (Dates separated by comma. No spaces.)", font=('arial', 14), bd=15)
+       self.lbl_dates_format.grid(row=1, sticky="w")
+       self.lbl_dates_format2 = tk.Label(self.Form, text = "For one day, use the same start and end date", font=('arial', 12), bd=15)
+       self.lbl_dates_format2.grid(row=2, sticky="w")
+       self.lbl_text = tk.Label(self.Form) #error messages appear here
+       self.lbl_text.grid(row=3, columnspan=2)
+
+                #==============================ENTRY WIDGETS==================================
+       self.enter_dates = tk.Entry(self.Form, textvariable=self.date_range, font=(14))
+       self.enter_dates.grid(row=5)
+
+                #==============================BUTTON WIDGETS=================================
+       self.btn_view = tk.Button(self.Form, text="View", width=45, command=self.view, fg='blue')
+       self.btn_view.grid(pady=25, row=6, columnspan=2)
+       self.btn_enter = tk.Button(self.Form, text="Enter Appointment times", width=45, command=self.enter, fg='green')
+       self.btn_enter.grid(pady=25, row=7, columnspan=2)
+
+   def view(self):
+       
+       pass
+
+   def enter(self):
+       pass
+class Patient_Record(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
        label = tk.Label(self, text="This is GP 3")
@@ -64,30 +110,30 @@ class MainView(tk.Frame):
         tk.Frame.__init__(self, *args, **kwargs)
         lbl_title = tk.Label(self, text = "GP: eHealth system", font=('arial', 15))
         lbl_title.pack(fill=tk.X)
-        p1 = GP1(self)
-        p2 = GP2(self)
-        p3 = GP3(self)
+        search = Search(self)
+        appointments = Appointments(self)
+        patient = Patient_Record(self)
 
         buttonframe = tk.Frame(self)
         container = tk.Frame(self)
         buttonframe.pack(side="top", fill="x", expand=False)
         container.pack(side="top", fill="both", expand=True)
 
-        p1.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        p2.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        p3.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
+        search.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
+        appointments.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
+        patient.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
-        b1 = tk.Button(buttonframe, text="GP 1", command=p1.lift)
-        b2 = tk.Button(buttonframe, text="GP 2", command=p2.lift)
-        b3 = tk.Button(buttonframe, text="GP 3", command=p3.lift)
-        btn_back = tk.Button(buttonframe, text='logout', command=self.logout)
+        search_btn = tk.Button(buttonframe, text="Search", command=search.lift)
+        appointments_btn = tk.Button(buttonframe, text="Appointments", command=appointments.lift)
+        patient_btn = tk.Button(buttonframe, text="Patient Records", command=patient.lift)
+        btn_logout = tk.Button(buttonframe, text='logout', command=self.logout)
 
-        b1.pack(side="left")
-        b2.pack(side="left")
-        b3.pack(side="left")
-        btn_back.pack(side="right")
+        search_btn.pack(side="left")
+        appointments_btn.pack(side="left")
+        patient_btn.pack(side="left")
+        btn_logout.pack(side="right")
 
-        p1.show()
+        search.show()
         
     def connect_to_db(self):
         global conn, cursor
@@ -110,6 +156,6 @@ if __name__ == "__main__":
     main = MainView(root)
     main.pack(side="top", fill="both", expand=True)
     root.title("Welcome to the eHealth system")
-    root.wm_geometry("400x400")
+    root.wm_geometry("900x900")
     main.bind('<Destroy>', close)
     root.mainloop()

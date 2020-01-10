@@ -92,23 +92,23 @@ def main():
     create_vaccine_record_table = """ CREATE TABLE IF NOT EXISTS Vaccine_Record (
                                     NHSno text NOT NULL,
                                     patientid integer NOT NULL,
-                                    date text NOT NULL,
+                                    date_v text NOT NULL,
                                     vaccine text NOT NULL,
                                     FOREIGN KEY (patientid) REFERENCES Patients (patientid),
                                     FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno),
-                                    PRIMARY KEY (NHSno, date, vaccine)
+                                    PRIMARY KEY (NHSno, date_v, vaccine)
                                 ); """
     
     create_medical_history_table = """ CREATE TABLE IF NOT EXISTS Medical_History (
                                     NHSno text NOT NULL,
                                     patientid integer NOT NULL,
                                     gpid integer NOT NULL,
-                                    date text NOT NULL,
+                                    date_mh text NOT NULL,
                                     record text NOT NULL,
                                     FOREIGN KEY (patientid) REFERENCES Patients (patientid),
                                     FOREIGN KEY (gpid) REFERENCES GPs (gpid),
                                     FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno),
-                                    PRIMARY KEY (NHSno, gpid, date)
+                                    PRIMARY KEY (NHSno, gpid, date_mh)
                                 ); """
     
     create_prescriptions_table = """ CREATE TABLE IF NOT EXISTS Presciptions (
@@ -118,10 +118,7 @@ def main():
                                     gpid integer NOT NULL,
                                     medication text NOT NULL,
                                     dosage text NOT NULL,
-                                    startDate text NOT NULL,
-                                    endDate text NOT NULL,
-                                    repeatScript text DEFAULT "no" NOT NULL,
-                                    repeatEnd text,
+                                    date_p text NOT NULL,
                                     FOREIGN KEY (patientid) REFERENCES Patients (patientid),
                                     FOREIGN KEY (gpid) REFERENCES GPs (gpid),
                                     FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno)
@@ -130,8 +127,8 @@ def main():
     create_appointments_table = """ CREATE TABLE IF NOT EXISTS Appointments (
                                     appointmentid integer PRIMARY KEY AUTOINCREMENT,
                                     gpid integer NOT NULL,
-                                    date text NOT NULL,
-                                    time text NOT NULL,
+                                    date_a text NOT NULL,
+                                    time_a text NOT NULL,
                                     patientid integer NULL,
                                     available text DEFAULT "yes" NOT NULL,
                                     FOREIGN KEY (patientid) REFERENCES Patients (id),

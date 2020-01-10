@@ -395,3 +395,26 @@ def search_gp_id(conn, gpid):
         print(e)
         
     return row
+
+#==============================GET NHSno======================================
+def get_NHSno(conn, pid):
+    """
+    Get NHS number using patient id
+    :param conn: Connection object
+    :params patient id:
+    :return NHSno
+    """
+    
+    sql = ''' SELECT NHSno 
+              FROM Patient_Record
+              WHERE patientid = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (pid,))
+        NHS_num = cur.fetchone()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return NHS_num
+    
