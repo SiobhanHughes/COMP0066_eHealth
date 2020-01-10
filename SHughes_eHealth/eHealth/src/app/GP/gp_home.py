@@ -76,7 +76,7 @@ class Appointments(GP):
                 #==============================LABELS=========================================
        self.lbl_dates_title = tk.Label(self.Form, text = "Enter a range of dates:", font=('arial', 18), bd=15)
        self.lbl_dates_title.grid(row=0, sticky="w")
-       self.lbl_dates_format = tk.Label(self.Form, text = "Format: YYYY-DD-MM,YYYY-DD-MM (Dates separated by comma. No spaces.)", font=('arial', 14), bd=15)
+       self.lbl_dates_format = tk.Label(self.Form, text = "Format: YYYY-DD-MM,YYYY-DD-MM (Dates separated by comma)", font=('arial', 14), bd=15)
        self.lbl_dates_format.grid(row=1, sticky="w")
        self.lbl_dates_format2 = tk.Label(self.Form, text = "For one day, use the same start and end date", font=('arial', 12), bd=15)
        self.lbl_dates_format2.grid(row=2, sticky="w")

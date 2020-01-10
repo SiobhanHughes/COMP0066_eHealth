@@ -89,33 +89,42 @@ def tel_format(tel):
 def check_dob(DOB):
     """ function to format entered date of birth into date object.
         Parameter: a string in the form YYYY-MM-DD """
-        
-    dob = DOB.split('-')
+    try:    
+        dob = DOB.split('-')
+    except:
+        return 'error'
     nums = []
     for i in dob:
         try:
             num = int(i)
             nums.append(num)
         except ValueError:
-            return 'not num'
+            return 'error'
     else:
         try:
             date_of_birth = dt.date(nums[0], nums[1], nums[2])
         except:
-            return 'not date'
+            return 'error'
     return date_of_birth
+
 
 def check_dates_format(dates):
     """ function to check entered range of dates is in correct format and convert to date object
         Parameter: a string in the form YYYY-MM-DD,YYYY-MM-DD """
-        
-    date_range = dates.split(',')
+    
+    try:  
+        date_range = dates.split(',')
+    except:
+        return 'error'
     if len(date_range) != 2: #check that only 2 dates entered
         return 'error'
     else: #convert strings to date objects
-        nums = {date_range[0]: date_range[0].split('-'), date_range[1]: date_range[1].split('-')}
-        print(nums)
-        
+        nums = {}
+        try:
+            nums[date_range[0]] = date_range[0].split('-')
+            nums[date_range[1]] = date_range[1].split('-')
+        except:
+            return 'error'
         try:
             start = dt.date(int(nums[date_range[0]][0]), int(nums[date_range[0]][1]), int(nums[date_range[0]][2]))
             end = dt.date(int(nums[date_range[1]][0]), int(nums[date_range[1]][1]), int(nums[date_range[1]][2]))
@@ -143,24 +152,25 @@ def gen_dates(start, end):
 def check_time_format(time):
     """ function to check entered range of time is in correct format and convert to time object
         Parameter: a string in the form HH:MM-HH:MM,HH:MM-HH:MM (use 24 hour clock)"""
-        
-    time_blocks = time.split(',')
-    print(time_blocks)
+    
+    try:    
+        time_blocks = time.split(',')
+    except:
+        return 'error'
     time_spans = {}
     for block in time_blocks:
-        time_spans[block] = block.split('-')
-    print(time_spans)
+        try:
+            time_spans[block] = block.split('-')
+        except:
+            return 'error'
     for value in time_spans.values():
-        value[0] = value[0].split(':')
-        value[1] = value[1].split(':')
-    print(time_spans)
+        try:
+            value[0] = value[0].split(':')
+            value[1] = value[1].split(':')
+        except:
+            return 'error'
     
     for key, value in time_spans.items():
-        # print(value[0][0])
-        # print(value[0][1])
-        # print(value[1][0])
-        # print(value[1][1])
-        
         try:
             time_spans[key] = [dt.time(int(value[0][0]), int(value[0][1])), dt.time(int(value[1][0]), int(value[1][1]))]
         except:
@@ -173,11 +183,14 @@ if __name__ == '__main__':
     x = check_dates_format('2020-01-10,2020-01-15')
     print(x)
     
-    y = gen_dates(x[0], x[1])
-    print(y)
-    for i in y:
-        print(i)
+    # y = gen_dates(x[0], x[1])
+    # print(y)
+    # for i in y:
+    #     print(i)
     
-    x = check_time_format('09:00-12:00,13:00-17:00')
+    x = check_time_format('09:00-12:00, 13:00-17:00, 19:00-20:00')
+    for values in x.values():
+        for v in values:
+            print(v)
     print('x: ', x)
     

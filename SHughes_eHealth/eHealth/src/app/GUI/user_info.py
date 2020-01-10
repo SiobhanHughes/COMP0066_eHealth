@@ -185,7 +185,7 @@ class Info_form:
                 self.lbl_text.config(text="Error entering emergency contact telephone number", fg="red")
             elif check.NHSno_unique(cursor, entered[15]) == 'exists':
                 self.lbl_text.config(text="Error: NHS number is not unique", fg="red")
-            elif check.check_dob(entered[16]) == 'not num' or check.check_dob(entered[16]) == 'not date':
+            elif check.check_dob(entered[16]) == 'error':
                 self.lbl_text.config(text="Error: DOB not correctly formattted", fg="red")
             else:
                 date_birth = check.check_dob(entered[16])
@@ -204,7 +204,7 @@ class Info_form:
                 self.lbl_text.config(text="Emergency contact email is not correctly formatted", fg="red")
             elif check.tel_format(entered[12]) != 'tel':
                 self.lbl_text.config(text="Error entering emergency contact telephone number", fg="red")
-            elif check.check_dob(entered[14]) == 'not num' or check.check_dob(entered[14]) == 'not date':
+            elif check.check_dob(entered[14]) == 'error':
                 self.lbl_text.config(text="Error: DOB not correctly formattted", fg="red")
             else:
                 date_birth = check.check_dob(entered[14])
