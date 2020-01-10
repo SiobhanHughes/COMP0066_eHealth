@@ -25,11 +25,11 @@ path.delete_dir()
 #============================CHECK USER INPUT FUNCTIONS============================================
 
 #helper function for use in this module only
-def connect_to_db():
-    global conn, cursor
-    db_file = connect.db_path(2)
-    conn = connect.create_connection(db_file)
-    cursor = conn.cursor()
+# def connect_to_db():
+#     global conn, cursor
+#     db_file = connect.db_path(2)
+#     conn = connect.create_connection(db_file)
+#     cursor = conn.cursor()
     
 def email_format(email):
     """ function checks that entered email matches the correct format using regular expressions """
@@ -43,7 +43,6 @@ def email_unique(cursor, user_type, email):
     """ function checks that email is unique with the eHealth database as it is used for login.
         param: cursor - global variable created when call function to connect to database
         param: user_type, email """
-    #connect_to_db() - pass connection to db
     if user_type == 'GP':
         cursor.execute('SELECT * from GPs WHERE email = ?', (email,))
         gp_email = cursor.fetchall()
@@ -59,23 +58,18 @@ def email_unique(cursor, user_type, email):
             return 'exists'
         else:
             return 'unique'
-    #cursor.close()
-    #conn.close()
     
 def NHSno_unique(cursor, NHSno):
     """ function checks that entered NHS number is unique as it is the primary key for the Patient Record table
         in the eHealth database
         param: cursor - global variable created when call function to connect to database
         param: NHSno"""
-    #connect_to_db() - pass connection to databse
     cursor.execute('SELECT * from Patient_Record WHERE NHSno = ?', (NHSno,))
     patient_num = cursor.fetchall()
     if patient_num != []:
         return 'exists'
     else:
         return 'unique'
-    cursor.close()
-    #conn.close()
     
 def tel_format(tel):
     """ Telephone number accpeted when is consists of up to 11 digits

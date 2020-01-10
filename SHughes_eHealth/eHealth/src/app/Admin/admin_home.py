@@ -203,7 +203,7 @@ class Homepage(Admin):
        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
         
 
-class Edit(Admin):
+class Manage(Admin):
     def __init__(self, *args, **kwargs):
         Admin.__init__(self, *args, **kwargs)
        
@@ -216,7 +216,7 @@ class Edit(Admin):
         self.Form.pack(side=tk.TOP, pady=20)
 
                  #==============================LABELS=========================================
-        self.lbl_edit = tk.Label(self.Form, text = "EDIT: enter a Patient or GP id number (use the search function)", font=('arial', 14), bd=15, fg='green')
+        self.lbl_edit = tk.Label(self.Form, text = "Enter a Patient or GP id number (use the search function)", font=('arial', 14), bd=15, fg='green')
         self.lbl_edit.grid(row=0, sticky="e")
         self.lbl_text = tk.Label(self.Form) #error messages appear here
         self.lbl_text.grid(row=1, columnspan=2)
@@ -243,31 +243,123 @@ class Edit(Admin):
         self.btn_deactivate.grid(pady=25, row=9, columnspan=2)
 
     
-    def get_id(self):
-        pass
+    def get_input(self):
+        type_id = []
+        pid = self.patient_id.get().strip()
+        gpid = self.gp_id.get().strip()
+        
+        if pid == '' and gpid == '':
+            self.lbl_text.config(text="Please enter a number", fg="red")
+        elif pid != '' and gpid == '':
+            type_id = self.get_id('Patient', pid)
+        elif pid == '' and gpid != '':
+            type_id = self.get_id('GP', gpid)
+        else:
+            self.lbl_text.config(text="Error: You can only search one at a time", fg="red")
+        return type_id
+        
+    
+    def get_id(self, user_type, user_id):
+        type_id = [user_type]
+        self.connect_to_db()
+        try:
+            user_id = int(user_id)
+        except ValueError:
+            self.lbl_text.config(text="Error: Please enter a number", fg="red")
+        else:
+            if user_type == 'Patient':
+                cursor.execute('SELECT * from Patients WHERE patientid = ?', (user_id,))
+                patient = cursor.fetchall()
+                if patient == []:
+                    self.lbl_text.config(text="Error: Patient does not exist - check id number", fg="red")
+                else:
+                    type_id.append(user_id)
+            elif user_type == 'GP':
+                cursor.execute('SELECT * from GPs WHERE gpid = ?', (user_id,))
+                gp = cursor.fetchall()
+                if gp == []:
+                    self.lbl_text.config(text="Error: GP does not exist - check id number", fg="red")
+                else:
+                    type_id.append(user_id)
+        return type_id
     
     def view(self):
-        pass
+       user_details = self.get_input()
+       if len(user_details) == 2:
+           top = tk.Toplevel()
+           view_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+           get_info = user_info.Info_form(view_info.inner, user_type=user_details[0], user_id=user_details[1], mode='view') #add entry widgets for details in the list above
+       
+           if user_details[0] == 'Patient':
+               top.title("View Patient information")
+           elif user_details[0] == 'GP':
+               top.title("View GP information")
+       
+           view_info.pack(side="top", fill="both", expand=True)
+           width = 800
+           height = 700
+           screen_width = self.master.winfo_screenwidth()
+           screen_height = self.master.winfo_screenheight()
+           x = (screen_width/2) - (width/2)
+           y = (screen_height/2) - (height/2)
+           top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+           cursor.close()
+           conn.close()
     
     def edit(self):
-        top = tk.Toplevel()
-        edit_info_win = outter_scroll_frame.ScrolledFrame(top)
-        top.title("Edit Information")
-        edit_info_win.pack(side="top", fill="both", expand=True)
-        width = 800
-        height = 700
-        screen_width = self.master.winfo_screenwidth()
-        screen_height = self.master.winfo_screenheight()
-        x = (screen_width/2) - (width/2)
-        y = (screen_height/2) - (height/2)
-        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+       user_details = self.get_input()
+       if len(user_details) == 2:
+           top = tk.Toplevel()
+           edit_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+           get_info = user_info.Info_form(edit_info.inner, user_type=user_details[0], user_id=user_details[1], mode='edit') #add entry widgets for details in the list above
+           
+           if user_details[0] == 'Patient':
+               top.title("Edit Patient information")
+           elif user_details[0] == 'GP':
+               top.title("Edit GP information")
+           
+           edit_info.pack(side="top", fill="both", expand=True)
+           width = 800
+           height = 700
+           screen_width = self.master.winfo_screenwidth()
+           screen_height = self.master.winfo_screenheight()
+           x = (screen_width/2) - (width/2)
+           y = (screen_height/2) - (height/2)
+           top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+           cursor.close()
+           conn.close()
     
     def delete(self):
-        pass
+        user_details = self.get_input()
+        if len(user_details) == 2:
+            if user_details[0] == 'Patient':
+                self.lbl_text.config(text="DO NOT delete patient records - please deactivate instead", fg="red")
+            elif user_details[0] == 'GP':
+                cursor.execute("DELETE FROM GPs WHERE gpid = ?", (user_details[1],))
+                self.lbl_text.config(text="GP information deleted", fg="red")
+                conn.commit()
+                cursor.close()
+                conn.close()
+            else:
+                self.lbl_text.config(text="Error deleting user", fg="red")
     
     def deactivate(self):
-        pass
-       
+        user_details = self.get_input()
+        if len(user_details) == 2:
+            if user_details[0] == 'Patient':
+                cursor.execute("UPDATE Patients SET active = ? WHERE patientid = ?", ('no', user_details[1]))
+                self.lbl_text.config(text="Patient account deactivate", fg="red")
+                conn.commit()
+                cursor.close()
+                conn.close()
+            elif user_details[0] == 'GP':
+                cursor.execute("UPDATE GPs SET active = ? WHERE gpid = ?", ('no', user_details[1]))
+                self.lbl_text.config(text="GP account deactivate", fg="red")
+                conn.commit()
+                cursor.close()
+                conn.close()
+            else:
+                self.lbl_text.config(text="Error deactivating user", fg="red")
 
 class Add(Admin):
    def __init__(self, *args, **kwargs):
@@ -290,14 +382,7 @@ class Add(Admin):
    def add_patient_info(self):
        top = tk.Toplevel()
        patient_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
-       
-       titles = ['Patient first name', 'Patient last name', 'Patient email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number'
-                 'Emergency contact first name', 'Emergency contact last name', 'Emergency contact email', 'Emergency contact -  Address: street'
-                 'Emergency contact -  Address: city', 'Emergency contact -  Address: postcode', 'Emergency contact -  Telephone number', 'Emergency contact -  Relationship',
-                 'NHS number', 'DOB (YYYY-MM-DD)', 'Drug allgergies', 'Medical Conditions', 'Disabilities', 'Smoker',
-                 'Alcohol - Units per week', 'Exercise']
-       patient = user_info.Info_form(patient_info.inner, titles) #add entry widgets for details in the list above
-        
+       patient = user_info.Info_form(patient_info.inner, user_type='Patient') #add entry widgets for details in the list above
        top.title("Add a new Patient to the eHealth system")
        patient_info.pack(side="top", fill="both", expand=True)
        width = 800
@@ -312,10 +397,7 @@ class Add(Admin):
    def add_gp_info(self):
        top = tk.Toplevel()
        gp_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
-       
-       titles = ['GP first name', 'GP last name', 'GP email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number']
-       gp = user_info.Info_form(gp_info.inner, titles)#add entry widgets for details in the list above
-        
+       gp = user_info.Info_form(gp_info.inner, user_type='GP')#add entry widgets for details in the list above
        top.title("Add a new GP to the eHealth system")
        gp_info.pack(side="top", fill="both", expand=True)
        width = 800
@@ -344,21 +426,21 @@ class MainView(tk.Frame):
         
         home = Homepage(self)
         add_to_system = Add(self)
-        edit = Edit(self)
+        manage = Manage(self)
     
         home.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
         add_to_system.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        edit.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
+        manage.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
         btn_home = tk.Button(buttonframe, text="Home", command=home.lift)
         btn_add_to_system = tk.Button(buttonframe, text="Add", command=add_to_system.lift)
-        btn_edit = tk.Button(buttonframe, text="Edit", command=edit.lift)
+        btn_manage = tk.Button(buttonframe, text="Manage Users", command=manage.lift)
         
         btn_logout = tk.Button(buttonframe, text='logout', command=self.logout, fg='red')
 
         btn_home.pack(side="left")
         btn_add_to_system.pack(side="left")
-        btn_edit.pack(side="left")
+        btn_manage.pack(side="left")
 
         btn_logout.pack(side="right")
 

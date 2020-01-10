@@ -169,8 +169,8 @@ def update_patient_record(conn, patient_record):
     :param patient_record: details to be updated and patientid
     """
     sql = ''' UPDATE Patient_Record
-              SET DOB = ?, drug_allergies = ?, medical_conditions = ?, disabilities = ?, smoker = ?
-              alcohol_units_per_week = ?, exercise = 
+              SET DOB = ?, drug_allergies = ?, medical_conditions = ?, disabilities = ?, smoker = ?,
+              alcohol_units_per_week = ?, exercise = ?
               WHERE patientid = ? '''
     try:
         cur = conn.cursor()

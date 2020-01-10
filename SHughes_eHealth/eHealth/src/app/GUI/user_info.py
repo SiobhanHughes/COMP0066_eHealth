@@ -55,8 +55,8 @@ class Info_form:
         if self.user_type == 'GP':
             titles = ['GP first name', 'GP last name', 'email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number']
         elif self.user_type == 'Patient':
-            titles = ['Patient first name', 'Patient last name', 'email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number'
-                 'Emergency contact first name', 'Emergency contact last name', 'Emergency contact email', 'Emergency contact -  Address: street'
+            titles = ['Patient first name', 'Patient last name', 'email', 'Address: street', 'Address: city', 'Address: postcode', 'Telephone number',
+                 'Emergency contact first name', 'Emergency contact last name', 'Emergency contact email', 'Emergency contact -  Address: street',
                  'Emergency contact -  Address: city', 'Emergency contact -  Address: postcode', 'Emergency contact -  Telephone number', 'Emergency contact -  Relationship',
                  'NHS number', 'DOB (YYYY-MM-DD)', 'Drug allgergies', 'Medical Conditions', 'Disabilities', 'Smoker',
                  'Alcohol - Units per week', 'Exercise']
@@ -119,7 +119,6 @@ class Info_form:
             val = entry.get().strip()
             if val != '':
                 entered.append(val)
-        print(entered)
         #call tests
         if self.mode == 'add' and self.user_type == 'GP':
             if len(entered) != len(self.titles):
@@ -184,7 +183,7 @@ class Info_form:
                 self.lbl_text.config(text="Emergency contact email is not correctly formatted", fg="red")
             elif check.tel_format(entered[13]) != 'tel':
                 self.lbl_text.config(text="Error entering emergency contact telephone number", fg="red")
-            elif check.NHSno_unique(entered[15]) == 'exists':
+            elif check.NHSno_unique(cursor, entered[15]) == 'exists':
                 self.lbl_text.config(text="Error: NHS number is not unique", fg="red")
             elif check.check_dob(entered[16]) == 'not num' or check.check_dob(entered[16]) == 'not date':
                 self.lbl_text.config(text="Error: DOB not correctly formattted", fg="red")
@@ -192,8 +191,8 @@ class Info_form:
                 date_birth = check.check_dob(entered[16])
                 begin = dt.date.today()
                 patient = (entered[0], entered[1], entered[2], entered[3], entered[4], entered[5], entered[6], begin,
-                              entered[7], entered[8], entered[9], entered[10], entered[11], entered[12], entered[13], entered[14])
-                patient_id = dbu.insert_gp(conn, patient)
+                           entered[7], entered[8], entered[9], entered[10], entered[11], entered[12], entered[13], entered[14])
+                patient_id = dbu.insert_patient(conn, patient)
                 patient_record = (entered[15], patient_id, date_birth, entered[17], entered[18], entered[19],
                                   entered[20], entered[21], entered[22])
                 dbu.insert_patient_record(conn, patient_record)
@@ -205,15 +204,14 @@ class Info_form:
                 self.lbl_text.config(text="Emergency contact email is not correctly formatted", fg="red")
             elif check.tel_format(entered[12]) != 'tel':
                 self.lbl_text.config(text="Error entering emergency contact telephone number", fg="red")
-            elif check.check_dob(entered[14]) == 'not num' or check.check_dob(entered[16]) == 'not date':
+            elif check.check_dob(entered[14]) == 'not num' or check.check_dob(entered[14]) == 'not date':
                 self.lbl_text.config(text="Error: DOB not correctly formattted", fg="red")
             else:
-                date_birth = check.check_dob(entered[16])
+                date_birth = check.check_dob(entered[14])
                 patient = (entered[0], entered[1], entered[2], entered[3], entered[4], entered[5], entered[6],
                               entered[7], entered[8], entered[9], entered[10], entered[11], entered[12], entered[13], self.user_id)
                 dbu.update_patient(conn, patient)
-                patient_record = (entered[14], patient_id, date_birth, entered[17], entered[18], entered[19],
-                                  entered[20], self.user_id)
+                patient_record = (date_birth, entered[15], entered[16], entered[17], entered[18], entered[19], entered[20], self.user_id)
                 dbu.update_patient_record(conn, patient_record)
                 self.save()
         cursor.close()
