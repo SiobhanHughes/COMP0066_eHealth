@@ -68,7 +68,7 @@ def insert_vaccine_record(conn, vaccine_record):
     :param conn: Connection object
     :param vaccine_record: details to be inserted
     """
-    sql = ''' INSERT INTO Vaccine_Record (NHSno, patientid, date, vaccine)
+    sql = ''' INSERT INTO Vaccine_Record (NHSno, patientid, date_v, vaccine)
               VALUES(?,?,?,?) '''
     try:
         cur = conn.cursor()
@@ -83,7 +83,7 @@ def insert_medical_history(conn, medical_history):
     :param conn: Connection object
     :param medical_history: details to be inserted
     """
-    sql = ''' INSERT INTO Medical_History (NHSno, patientid, gpid, date, record)
+    sql = ''' INSERT INTO Medical_History (NHSno, patientid, gpid, date_mh, record)
               VALUES(?,?,?,?,?) '''
     try:
         cur = conn.cursor()
@@ -98,8 +98,8 @@ def insert_presciption(conn, prescription):
     :param conn: Connection object
     :param presciption: details to be inserted
     """
-    sql = ''' INSERT INTO Prescriptions (NHSno, patientid, gpid, medication, dosage, startDate, endDate, repeatEnd)
-              VALUES(?,?,?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO Prescriptions (NHSno, patientid, gpid, medication, dosage, date_p)
+              VALUES(?,?,?,?,?,?) '''
     try:
         cur = conn.cursor()
         cur.execute(sql, prescription)
@@ -114,8 +114,8 @@ def insert_appointment(conn, appointment):
     :param conn: Connection object
     :param appointment: details to be inserted
     """
-    sql = ''' INSERT INTO Appointments (gpid, date, time)
-              VALUES(?,?,?) '''
+    sql = ''' INSERT INTO Appointments (gpid, date_time)
+              VALUES(?,?) '''
     try:
         cur = conn.cursor()
         cur.execute(sql, appointment)

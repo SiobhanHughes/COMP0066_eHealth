@@ -35,6 +35,7 @@ from src.database import connect
 from src.utilities import track_user as track
 from src.app.Admin import admin_home
 from src.app.GP import gp_home
+from src.app.GP import add_availability
 from src.app.Patient import patient_home
 path.delete_dir()
 
@@ -181,7 +182,7 @@ class Login(tk.Frame):
         elif gp_login is not None and gp_login[4] is not None:
             storedpasswd = gp_login[4]
             if pwdu.verify_password(storedpasswd, entered_passwd):
-                user = {'type': 'gp', 'id': gp_login[0], 'fname': gp_login[1], 'lname': gp_login[2], 'email': gp_login[3]}
+                user = {'type': 'gp', 'gpid': gp_login[0], 'fname': gp_login[1], 'lname': gp_login[2], 'email': gp_login[3]}
                 print(user)
                 track.store(user, 3) #gp is logged in (track)
                 logging.info('GP logged in.')
@@ -196,7 +197,7 @@ class Login(tk.Frame):
         elif patient_login is not None and patient_login[4] is not None:
             storedpasswd = patient_login[4]
             if pwdu.verify_password(storedpasswd, entered_passwd):
-                user = {'type': 'patient', 'id': patient_login[0],
+                user = {'type': 'patient', 'patientid': patient_login[0],
                         'fname': patient_login[1], 'lname': patient_login[2],
                         'email': patient_login[3], 'NHSno': patient_login[5]}
                 print(user)

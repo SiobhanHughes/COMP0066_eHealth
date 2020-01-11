@@ -127,12 +127,11 @@ def main():
     create_appointments_table = """ CREATE TABLE IF NOT EXISTS Appointments (
                                     appointmentid integer PRIMARY KEY AUTOINCREMENT,
                                     gpid integer NOT NULL,
-                                    date_a text NOT NULL,
-                                    time_a text NOT NULL,
-                                    patientid integer NULL,
+                                    date_time text NOT NULL,
+                                    patientid integer,
                                     available text DEFAULT "yes" NOT NULL,
-                                    FOREIGN KEY (patientid) REFERENCES Patients (id),
-                                    FOREIGN KEY (gpid) REFERENCES GPs (id)
+                                    FOREIGN KEY (patientid) REFERENCES Patients (patientid),
+                                    FOREIGN KEY (gpid) REFERENCES GPs (gpid)
                                 ); """
     
     

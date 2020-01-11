@@ -131,7 +131,7 @@ def check_dates_format(dates):
         except:
             return 'error'
         
-        if start > end or start < dt.date.today():
+        if start > end:
             return 'error'
         else:
             return start, end
@@ -153,10 +153,9 @@ def check_time_format(time):
     """ function to check entered range of time is in correct format and convert to time object
         Parameter: a string in the form HH:MM-HH:MM,HH:MM-HH:MM (use 24 hour clock)"""
     
-    try:    
-        time_blocks = time.split(',')
-    except:
-        return 'error'
+   
+    time_blocks = time.split(',')
+    
     time_spans = {}
     for block in time_blocks:
         try:

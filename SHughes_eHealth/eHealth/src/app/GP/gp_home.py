@@ -17,8 +17,6 @@ from sqlite3 import Error
 import datetime as dt
 import re
 
-import add_availability
-
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
 # delete file path for eHealth directory from sys.path
@@ -33,6 +31,7 @@ from src.utilities import check_input as check
 from src.app.GUI import outter_scroll_frame
 from src.app.GUI import search_results_window
 from src.app.GUI import user_info
+from src.app.GP import add_availability
 path.delete_dir()
 
 
@@ -67,7 +66,8 @@ class Search(GP):
 class Appointments(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       #self.user = track.load('user.pickle', 3)
+       self.user = track.load('user.pickle', 3)
+       print(self.user)
        
         #==============================VARIABLES======================================
        self.date_range = tk.StringVar()
@@ -112,7 +112,7 @@ class Appointments(GP):
            else:
                date_range = check.gen_dates(start, end)
                for d in date_range:
-                   cursor.execute('SELECT * FROM Appointments WHERE date_a = ?', (d,))
+                   cursor.execute('SELECT date(date_time) FROM Appointments WHERE date(date_time) = ?', (d,))
                    row = cursor.fetchall()
                    if row != []:
                        self.lbl_text.config(text="Error: You already added availability for some of these dates", fg="red")

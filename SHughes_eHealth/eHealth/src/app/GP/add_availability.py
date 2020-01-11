@@ -38,7 +38,7 @@ class Add_time(tk.Frame):
     def __init__(self, parent, dates, *args, **kwargs):
         self.parent = parent
         self.dates = dates
-        #get dates for which GP wants to enter availability
+        self.user = track.load('user.pickle', 3)
         self.create_widgets(self.dates)
     
     def create_widgets(self, dates):
@@ -46,20 +46,15 @@ class Add_time(tk.Frame):
         self.labelframe.pack(fill="both", expand=True)
         self.label = tk.Label(self.labelframe, text='Add time range in the format HH:MM-HH:MM,HH:MM-HH:MM using 24h (separated by comma)')
         self.label.pack(expand=True, fill='both')
-        self.lbl_text = tk.Label(self.labelframe) #error messages appear here
-        self.lbl_text.pack(expand=True, fill='both')
         
         self.times = []
-        self.dates_inserted = []
         for i in range(len(dates)):
             date = dates[i]
             self.labelframe = tk.LabelFrame(self.parent)
             self.labelframe.pack(fill="both", expand=True)
     
-            self.entered_date = tk.Entry(self.labelframe)
+            self.entered_date = tk.Label(self.labelframe, text=date)
             self.entered_date.pack()
-            self.entered_date.insert(0, date)
-            self.dates_inserted.append(self.entered_date)
     
             self.enter_time = tk.Entry(self.labelframe)
             self.enter_time.pack()
@@ -69,7 +64,7 @@ class Add_time(tk.Frame):
         self.labelframe.pack(fill="both", expand=True)
         self.label = tk.Label(self.labelframe)
         self.label.pack(expand=True, fill='both')
-        self.label = tk.Label(self.labelframe, text='Save all details', fg='blue')
+        self.label = tk.Label(self.labelframe, text='Add Appointment availability', fg='blue')
         self.label.pack(expand=True, fill='both')
         self.lbl_text = tk.Label(self.labelframe) #error messages appear here
         self.lbl_text.pack(expand=True, fill='both')
@@ -87,26 +82,28 @@ class Add_time(tk.Frame):
 
     
     def get_input(self):
+        self.connect_to_db()
         times = self.get_times()
         print('times entered:', times)       
-        dates = self.get_dates()
+        dates = self.dates
         print('dates entered:', dates)
-        if (dates is not None) and (times is not None):
-            format_dates = self.format_dates(dates)
-            print('dates: ', format_dates)
+        if times is not None:
             time_ranges = self.format_times(times)
             print('times: ', time_ranges)
         
-        #format_dates - pass one date together with time_ranges dictionary to generate appointments for each date (index match)
-            if (format_dates is not None) and (time_ranges is not None):
-                for i in range(len(format_dates)):
-                    appointments = check.gen_appointments(format_dates[i], time_ranges[i])
+        #dates list - pass one date together with time_ranges dictionary to generate appointments for each date (index match)
+            if time_ranges is not None:
+                for i in range(len(dates)):
+                    appointments = check.gen_appointments(dates[i], time_ranges[i])
                     for i in appointments:
                         print(i)
-                        only_date, only_time = i.date(), i.time()
-                        print(only_date)
-                        print(only_time)
+                        date_time = i
+                        gpid = self.user['gpid']
+                        appoint = (gpid, date_time)
+                        print(appoint)
+                        dbu.insert_appointment(conn, appoint)
                         self.save()
+        conn.close()
     
     def get_times(self):
         entered_time_ranges= []
@@ -114,39 +111,38 @@ class Add_time(tk.Frame):
             val = entry.get().strip()
             if val != '':
                 entered_time_ranges.append(val)
-                print('entered times: ', entered_time_ranges)
         if len(entered_time_ranges) != len(self.dates):
                 self.lbl_text.config(text="Some data is missing", fg="red")
                 return None
         else:
             return entered_time_ranges
         
-    def get_dates(self):
-        date_ranges = []
-        for entry in self.dates_inserted:
-            val = entry.get().strip()
-            if val != '':
-                date_ranges.append(val)
-        if len(date_ranges) != len(self.dates):
-                self.lbl_text.config(text="Some data is missing", fg="red")
-                return None
-        else: 
-            return date_ranges
+    # def get_dates(self):
+    #     date_ranges = []
+    #     for entry in self.dates_inserted:
+    #         val = entry.get().strip()
+    #         if val != '':
+    #             date_ranges.append(val)
+    #     if len(date_ranges) != len(self.dates):
+    #             self.lbl_text.config(text="Some data is missing", fg="red")
+    #             return None
+    #     else: 
+    #         return date_ranges
     
-    def format_dates(self, dates):
-        format_dates = []
-        for d in dates:
-            one_date = check.check_date_format(d)
-            if one_date == 'error':
-                self.lbl_text.config(text="Error with date formatt (YYYY-MM-DD)", fg="red")
-                return None
-            else:
-                format_dates.append(one_date)
-        if len(format_dates) != len(self.dates):
-            self.lbl_text.config(text="Error: date missing", fg="red")
-            return None
-        else:
-            return format_dates
+    # def format_dates(self, dates):
+    #     format_dates = []
+    #     for d in dates:
+    #         one_date = check.check_date_format(d)
+    #         if one_date == 'error':
+    #             self.lbl_text.config(text="Error with date formatt (YYYY-MM-DD)", fg="red")
+    #             return None
+    #         else:
+    #             format_dates.append(one_date)
+    #     if len(format_dates) != len(self.dates):
+    #         self.lbl_text.config(text="Error: date missing", fg="red")
+    #         return None
+    #     else:
+    #         return format_dates
         
     def format_times(self, times):
         ranges = []
@@ -158,7 +154,7 @@ class Add_time(tk.Frame):
             else:
                 ranges.append(time_range)
         if len(ranges) != len(self.dates):
-            self.lbl_text.config(text="Error: times missing or incorrectly formatted", fg="red")
+            self.lbl_text.config(text="Error: times missing", fg="red")
             return None
         else:
             return ranges
