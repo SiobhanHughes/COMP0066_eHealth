@@ -32,6 +32,7 @@ from src.app.GUI import outter_scroll_frame
 from src.app.GUI import search_results_window
 from src.app.GUI import user_info
 from src.app.GP import add_availability
+from src.app.GP import view_records
 path.delete_dir()
 
 
@@ -60,14 +61,98 @@ class GP(tk.Frame):
 class Search(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       label = tk.Label(self, text="This is GP 1")
-       label.pack(side="top", fill="both", expand=True)
+       #self.user = track.load('user.pickle', 3)
+       
+        #==============================VARIABLES======================================
+       self.patient_fname = tk.StringVar()
+       self.patient_lname = tk.StringVar()
+
+            #==============================FRAMES=========================================
+       self.Form = tk.Frame(self, height=200)
+       self.Form.pack(side=tk.TOP, pady=20)
+
+                #==============================LABELS=========================================
+
+       self.lbl_search = tk.Label(self.Form, text = "SEARCH", font=('arial', 18), bd=15)
+       self.lbl_search.grid(row=0, sticky="e")
+       self.lbl_text = tk.Label(self.Form) #error messages appear here
+       self.lbl_text.grid(row=1, columnspan=2)
+       self.lbl_pfname = tk.Label(self.Form, text = "Patient First Name:", font=('arial', 14), bd=15)
+       self.lbl_pfname.grid(row=2, sticky="e")
+       self.lbl_plname = tk.Label(self.Form, text = "Patient Last Name:", font=('arial', 14), bd=15)
+       self.lbl_plname.grid(row=2, column= 1,sticky="e")
+
+
+                #==============================ENTRY WIDGETS==================================
+       self.enter_patient_fname = tk.Entry(self.Form, textvariable=self.patient_fname, font=(14))
+       self.enter_patient_fname.grid(row=3)
+       self.enter_patient_lname = tk.Entry(self.Form, textvariable=self.patient_lname, font=(14))
+       self.enter_patient_lname.grid(row=3, column=1)
+
+                #==============================BUTTON WIDGETS=================================
+       self.btn_search_p = tk.Button(self.Form, text="Search Patients", width=45, command=self.search_patient, fg='green')
+       self.btn_search_p.grid(pady=25, row=4, columnspan=2)
+       self.btn_clear = tk.Button(self.Form, text="Clear", width=45, command=self.clear)
+       self.btn_clear.grid(pady=25, row=5, columnspan=2)
+       
+   
+   def search_patient(self):
+       first = self.patient_fname.get().strip()
+       last = self.patient_lname.get().strip()
+       titles = ['Patient id','Patient first name', 'Patient last name', 'email', 'DOB', 'NHSno', 'street', 'city', 'postcode', 'tel', 'active' ]
+       if first == '' and last == '':
+           self.lbl_text.config(text="No Patient name to search!", fg="red")
+       else:
+        self.connect_to_db()
+        if first != '' and last == '':
+            p1 = dbu.search_patient_fname(conn, first)
+            if p1 != []:
+                self.patient_search_result(titles, p1)
+                print(p1)
+            else:
+                self.lbl_text.config(text="Error: No such Patient found", fg="red")
+        elif first == '' and last != '':
+            p2 = dbu.search_patient_lname(conn, last)
+            if p2 != []:
+                self.patient_search_result(titles, p2)
+            else:
+                self.lbl_text.config(text="Error: No such Patient found", fg="red")
+        else:
+            p3 = dbu.search_patient_fullname(conn, (first, last))
+            if p3 != []:
+                self.patient_search_result(titles, p3)
+            else:
+                self.lbl_text.config(text="Error: No such Patient found", fg="red")
+        conn.close()
+
+
+   
+   def clear(self):
+       self.patient_fname.set("")
+       self.patient_lname.set("")
+
+   
+   def patient_search_result(self, titles, patient):
+       top = tk.Toplevel()
+       patient_win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       patient_info = search_results_window.Search_results(patient_win.inner, titles, patient)
+       top.title("Patient Search Results")
+       patient_win.pack(side="top", fill="both", expand=True)
+       width = 1100
+       height = 400
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+
+        
+
 
 class Appointments(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       self.user = track.load('user.pickle', 3)
-       print(self.user)
+       #self.user = track.load('user.pickle', 3)
        
         #==============================VARIABLES======================================
        self.date_range = tk.StringVar()
@@ -176,9 +261,173 @@ class Appointments(GP):
 class Patient_Record(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       label = tk.Label(self, text="This is GP 3")
-       label.pack(side="top", fill="both", expand=True)
+       #self.user = track.load('user.pickle', 3)
+       
+        #==============================VARIABLES======================================
+       self.patient_id = tk.StringVar()
+            
+            #==============================FRAMES=========================================
+       self.Form = tk.Frame(self, height=200)
+       self.Form.pack(side=tk.TOP, pady=20)   
+           #==============================LABELS=========================================
+       self.lbl_enter = tk.Label(self.Form, text = "Enter a Patient id number (use the search function)", font=('arial', 18), bd=15)
+       self.lbl_enter.grid(row=0, sticky="e")
+       self.lbl_text = tk.Label(self.Form) #error messages appear here
+       self.lbl_text.grid(row=1, columnspan=2)
+       self.lbl_pid = tk.Label(self.Form, text = "Patient id:", font=('arial', 14), bd=15)
+       self.lbl_pid.grid(row=2, sticky="w") 
+                #==============================ENTRY WIDGETS==================================
+       self.patient_id = tk.Entry(self.Form, textvariable=self.patient_id, font=(14))
+       self.patient_id.grid(row=3)
+  
+                #==============================BUTTON WIDGETS=================================
+       self.btn_view = tk.Button(self.Form, text="View Patient Records", width=45, command=self.view, fg='green')
+       self.btn_view.grid(pady=25, row=4, columnspan=2)
+       self.btn_edit = tk.Button(self.Form, text="Edit Patient info", width=45, command=self.edit)
+       self.btn_edit.grid(pady=25, row=5, columnspan=2)
+       self.btn_medical = tk.Button(self.Form, text="Add Medical Record", width=45, command=self.medical, fg='blue')
+       self.btn_medical.grid(pady=25, row=6, columnspan=2)
+       self.btn_presciption = tk.Button(self.Form, text="Add Prescription", width=45, command=self.prescription, fg='blue')
+       self.btn_presciption.grid(pady=25, row=7, columnspan=2)  
+       self.btn_vaccine = tk.Button(self.Form, text="Add Vaccine Record", width=45, command=self.vaccine, fg='blue')
+       self.btn_vaccine.grid(pady=25, row=8, columnspan=2)  
+   
+   def get_input(self):
+       type_id = []
+       pid = self.patient_id.get().strip()
+       
+       if pid == '':
+           self.lbl_text.config(text="Please enter a Patient id number", fg="red")
+       else:
+           type_id = self.get_id('Patient', pid)
+       return type_id
+       
+   
+   def get_id(self, user_type, user_id):
+       type_id = [user_type]
+       self.connect_to_db()
+       try:
+           user_id = int(user_id)
+       except ValueError:
+           self.lbl_text.config(text="Error: Please enter a number", fg="red")
+       else:
+           if user_type == 'Patient':
+               cursor.execute('SELECT * from Patients WHERE patientid = ?', (user_id,))
+               patient = cursor.fetchall()
+               if patient == []:
+                   self.lbl_text.config(text="Error: Patient does not exist - check id number", fg="red")
+               else:
+                   type_id.append(user_id)
+       return type_id
+   
+   def view(self):
+      patient_details = self.get_input()
+      if len(patient_details) == 2:
+        #open multiple windows!! Patient info, medical record, presciption, vaccine
+        self.view_info(patient_details)
+        self.view_medical(patient_details[1])
+        self.view_vaccine(patient_details[1])
+        self.view_prescriptions(patient_details[1])
+      else:
+        self.lbl_text.config(text="Error getting patient information", fg="red")
+        
+   def view_medical(self, patient_id_num):
+       top = tk.Toplevel()
+       view_medical = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       get_info = view_records.Patient_records(view_medical.inner, patient_id=patient_id_num) #add entry widgets for details in the list above
+       top.title("Patient Medical History")
+       view_medical.pack(side="top", fill="both", expand=True)
+       width = 800
+       height = 700
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
 
+   
+   def view_vaccine(self, patient_id_num):
+       top = tk.Toplevel()
+       view_vaccine = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       get_info = view_records.Patient_records(view_vaccine.inner, patient_id=patient_id_num, record_type='vaccine') #add entry widgets for details in the list above
+       top.title("Patient Vaccine Record")
+       view_vaccine.pack(side="top", fill="both", expand=True)
+       width = 800
+       height = 700
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+   
+   def view_prescriptions(self, patient_id_num):
+       top = tk.Toplevel()
+       view_prescription = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       get_info = view_records.Patient_records(view_prescription.inner, patient_id=patient_id_num, record_type='prescription') #add entry widgets for details in the list above
+       top.title("Patient Presciptions")
+       view_prescription.pack(side="top", fill="both", expand=True)
+       width = 800
+       height = 700
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+
+
+        
+    
+   def view_info(self, patient_details):
+        top = tk.Toplevel()
+        view_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+        get_info = user_info.Info_form(view_info.inner, user_type=patient_details[0], user_id=patient_details[1], mode='view') #add entry widgets for details in the list above
+    
+        if patient_details[0] == 'Patient':
+            top.title("View Patient information")
+    
+        view_info.pack(side="top", fill="both", expand=True)
+        width = 800
+        height = 700
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+        x = (screen_width/2) - (width/2)
+        y = (screen_height/2) - (height/2)
+        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+        cursor.close()
+        conn.close()
+   
+   def edit(self):
+      patient_details = self.get_input()
+      if len(patient_details) == 2:
+          top = tk.Toplevel()
+          edit_info = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+          get_info = user_info.Info_form(edit_info.inner, user_type=patient_details[0], user_id=patient_details[1], mode='edit') #add entry widgets for details in the list above
+          
+          if patient_details[0] == 'Patient':
+              top.title("Edit Patient information")
+          
+          edit_info.pack(side="top", fill="both", expand=True)
+          width = 800
+          height = 700
+          screen_width = self.master.winfo_screenwidth()
+          screen_height = self.master.winfo_screenheight()
+          x = (screen_width/2) - (width/2)
+          y = (screen_height/2) - (height/2)
+          top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+          cursor.close()
+          conn.close()
+ 
+   
+   def medical(self):
+       pass
+   
+   def prescription(self):
+       pass
+   
+   def vaccine(self):
+       pass
+   
+ 
 class MainView(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)

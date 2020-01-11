@@ -65,7 +65,7 @@ class Add_time(tk.Frame):
         self.labelframe.pack(fill="both", expand=True)
         self.label = tk.Label(self.labelframe)
         self.label.pack(expand=True, fill='both')
-        self.label = tk.Label(self.labelframe, text='Add Appointment availability', fg='blue')
+        self.label = tk.Label(self.labelframe, text='Add Appointment availability (appointments will be allocated as 15 min time slots)', fg='blue')
         self.label.pack(expand=True, fill='both')
         self.lbl_text = tk.Label(self.labelframe) #error messages appear here
         self.lbl_text.pack(expand=True, fill='both')

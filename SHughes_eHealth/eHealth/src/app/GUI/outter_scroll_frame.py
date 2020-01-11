@@ -8,7 +8,7 @@ class ScrolledFrame(tk.Frame):
     
     """ Scrolling Frame - add widgets to innner"""
 
-    def __init__(self, parent, vertical=True, horizontal=False):
+    def __init__(self, parent, vertical=True, horizontal=True):
         super().__init__(parent)
 
         # canvas for inner frame

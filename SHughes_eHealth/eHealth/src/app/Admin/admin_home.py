@@ -305,6 +305,9 @@ class Manage(Admin):
            top.geometry("%dx%d+%d+%d" % (width, height, x, y))
            cursor.close()
            conn.close()
+       else:
+           self.lbl_text.config(text="Error getting details", fg="red")
+
     
     def edit(self):
        user_details = self.get_input()
@@ -328,6 +331,9 @@ class Manage(Admin):
            top.geometry("%dx%d+%d+%d" % (width, height, x, y))
            cursor.close()
            conn.close()
+       else:
+           self.lbl_text.config(text="Error getting details", fg="red")
+
     
     def delete(self):
         user_details = self.get_input()

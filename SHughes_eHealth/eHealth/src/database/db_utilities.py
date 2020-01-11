@@ -418,3 +418,68 @@ def get_NHSno(conn, pid):
         
     return NHS_num
     
+#==============================Search Records======================================
+def search_medical(conn, patientid):
+    """
+    Search and retrieve Patient Medical History
+    :param conn: Connection object
+    :params patient id
+    return All patient medical history
+    """
+    sql = ''' SELECT date(date_mh), p.fname, p.lname, g.fname, g.lname, NHSno, record
+              FROM Patients p, Medical_History mh, GPs g
+              WHERE p.patientid = mh.patientid
+              AND g.gpid = mh.gpid
+              AND p.patientid = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (patientid,))
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return rows
+
+def search_vaccine(conn, patientid):
+    """
+    Search and retrieve Patient Vaccine Record
+    :param conn: Connection object
+    :params patient id
+    return All patient vaccine info
+    """
+    sql = ''' SELECT date(date_v), p.fname, p.lname, NHSno, vaccine
+              FROM Patients p, Vaccine_Record v, GPs g
+              WHERE p.patientid = v.patientid
+              AND p.patientid = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (patientid,))
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return rows
+
+def search_prescription(conn, patientid):
+    """
+    Search and retrieve Patient presciptions
+    :param conn: Connection object
+    :params patient id
+    return All patient prescription info
+    """
+    sql = ''' SELECT date(date_p), p.fname, p.lname, g.fname, g.lname, NHSno, medication, dosage
+              FROM Patients p, Presciptions pr, GPs g
+              WHERE p.patientid = pr.patientid
+              AND g.gpid = pr.gpid
+              AND p.patientid = ? '''
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (patientid,))
+        rows = cur.fetchall()
+        conn.commit()
+    except Error as e:
+        print(e)
+        
+    return rows
