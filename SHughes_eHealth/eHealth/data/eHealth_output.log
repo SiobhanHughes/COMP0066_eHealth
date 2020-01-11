@@ -212,3 +212,15 @@
 2020-01-11 22:09:51,127 - gp_home - INFO - GP logged out. Widgets destroyed
 2020-01-11 22:09:51,128 - gp_home - INFO - user.pickle deleted - new user can log in
 2020-01-11 22:09:53,693 - login - INFO - Application closed
+2020-01-11 22:14:06,944 - login - INFO - Result of sql query for gp email login: (1, 'Jane', 'Allen', 'jane_allen@gmail.com', '3ec4b70a4a13917f650a97f15a4df2f0be39b3d187dd0023353bad525eabbd9ae39b38e437a3aabc17284f60ba988859591c3a0379e6e40c943344ad3a7057fe3e097bef60d572be7256fa54fa670cbbce0c867339fc730a56754637f423c9e1', 'yes')
+2020-01-11 22:14:06,945 - login - INFO - Result of sql query for patient email login: None
+2020-01-11 22:14:07,031 - login - INFO - GP logged in.
+2020-01-11 22:14:22,035 - gp_home - INFO - GP logged out. Widgets destroyed
+2020-01-11 22:14:22,035 - gp_home - INFO - user.pickle deleted - new user can log in
+2020-01-11 22:14:24,885 - login - INFO - Application closed
+2020-01-11 22:16:22,637 - login - INFO - Result of sql query for gp email login: (1, 'Jane', 'Allen', 'jane_allen@gmail.com', '3ec4b70a4a13917f650a97f15a4df2f0be39b3d187dd0023353bad525eabbd9ae39b38e437a3aabc17284f60ba988859591c3a0379e6e40c943344ad3a7057fe3e097bef60d572be7256fa54fa670cbbce0c867339fc730a56754637f423c9e1', 'yes')
+2020-01-11 22:16:22,638 - login - INFO - Result of sql query for patient email login: None
+2020-01-11 22:16:22,726 - login - INFO - GP logged in.
+2020-01-11 22:16:48,463 - gp_home - INFO - GP logged out. Widgets destroyed
+2020-01-11 22:16:48,463 - gp_home - INFO - user.pickle deleted - new user can log in
+2020-01-11 22:16:50,637 - login - INFO - Application closed

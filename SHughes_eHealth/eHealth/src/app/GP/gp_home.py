@@ -31,8 +31,8 @@ from src.utilities import check_input as check
 from src.app.GUI import outter_scroll_frame
 from src.app.GUI import search_results_window
 from src.app.GUI import user_info
+from src.app.GUI import view_records
 from src.app.GP import add_availability
-from src.app.GP import view_records
 from src.app.GP import add_medical
 from src.app.GP import add_prescription
 from src.app.GP import add_vaccine

@@ -451,7 +451,7 @@ def search_vaccine(conn, patientid):
     sql = ''' SELECT date(date_v), p.fname, p.lname, g.fname, g.lname, NHSno, vaccine
               FROM Patients p, Vaccine_Record v, GPs g
               WHERE p.patientid = v.patientid
-              AND g.gpip = v.gpid
+              AND g.gpid = v.gpid
               AND p.patientid = ? '''
     try:
         cur = conn.cursor()
