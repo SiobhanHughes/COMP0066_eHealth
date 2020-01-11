@@ -34,10 +34,7 @@ class Add_medical:
         self.patient_id = patient_id
         self.user = track.load('user.pickle', 3)
         self.details = self.get_patient()
-        
-         #==============================VARIABLES======================================
-        self.patient_fname = tk.StringVar()
-        self.patient_lname = tk.StringVar()
+
         
               #==============================FRAMES=========================================
         self.Form = tk.Frame(self.parent, height=200)
@@ -75,7 +72,7 @@ class Add_medical:
     def save(self):
         self.connect_to_db()
         record = self.textFrame.get("1.0", tk.END)
-        if record == ' ':
+        if self.textFrame.compare("end-1c", "==", "1.0"):
             self.lbl_text.config(text="No Medical History entered", fg="red")
         else:
             medical_history = (self.details[0][2], self.patient_id, self.user['gpid'], dt.datetime.now(), record)

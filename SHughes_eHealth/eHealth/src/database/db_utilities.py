@@ -68,8 +68,8 @@ def insert_vaccine_record(conn, vaccine_record):
     :param conn: Connection object
     :param vaccine_record: details to be inserted
     """
-    sql = ''' INSERT INTO Vaccine_Record (NHSno, patientid, date_v, vaccine)
-              VALUES(?,?,?,?) '''
+    sql = ''' INSERT INTO Vaccine_Record (NHSno, patientid, gpid, date_v, vaccine)
+              VALUES(?,?,?,?,?) '''
     try:
         cur = conn.cursor()
         cur.execute(sql, vaccine_record)
@@ -448,9 +448,10 @@ def search_vaccine(conn, patientid):
     :params patient id
     return All patient vaccine info
     """
-    sql = ''' SELECT date(date_v), p.fname, p.lname, NHSno, vaccine
+    sql = ''' SELECT date(date_v), p.fname, p.lname, g.fname, g.lname, NHSno, vaccine
               FROM Patients p, Vaccine_Record v, GPs g
               WHERE p.patientid = v.patientid
+              AND g.gpip = v.gpid
               AND p.patientid = ? '''
     try:
         cur = conn.cursor()
@@ -470,7 +471,7 @@ def search_prescription(conn, patientid):
     return All patient prescription info
     """
     sql = ''' SELECT date(date_p), p.fname, p.lname, g.fname, g.lname, NHSno, medication, dosage
-              FROM Patients p, Presciptions pr, GPs g
+              FROM Patients p, Prescriptions pr, GPs g
               WHERE p.patientid = pr.patientid
               AND g.gpid = pr.gpid
               AND p.patientid = ? '''

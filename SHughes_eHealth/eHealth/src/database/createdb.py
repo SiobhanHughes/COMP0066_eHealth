@@ -92,9 +92,11 @@ def main():
     create_vaccine_record_table = """ CREATE TABLE IF NOT EXISTS Vaccine_Record (
                                     NHSno text NOT NULL,
                                     patientid integer NOT NULL,
+                                    gpid integer NOT NULL,
                                     date_v text NOT NULL,
                                     vaccine text NOT NULL,
                                     FOREIGN KEY (patientid) REFERENCES Patients (patientid),
+                                    FOREIGN KEY (gpid) REFERENCES GPs (gpid),
                                     FOREIGN KEY (NHSno) REFERENCES Patient_Record (NHSno),
                                     PRIMARY KEY (NHSno, date_v, vaccine)
                                 ); """
@@ -111,7 +113,7 @@ def main():
                                     PRIMARY KEY (NHSno, gpid, date_mh)
                                 ); """
     
-    create_prescriptions_table = """ CREATE TABLE IF NOT EXISTS Presciptions (
+    create_prescriptions_table = """ CREATE TABLE IF NOT EXISTS Prescriptions (
                                     prescriptionid integer PRIMARY KEY AUTOINCREMENT,
                                     NHSno text NOT NULL,
                                     patientid integer NOT NULL,

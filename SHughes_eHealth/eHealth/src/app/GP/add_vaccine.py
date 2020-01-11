@@ -31,46 +31,59 @@ class Add_vaccine:
     def __init__(self, parent, patient_id=None, *args, **kwargs):
         self.parent = parent
         self.patient_id = patient_id
-        self.name = self.get_patient()
+        self.user = track.load('user.pickle', 3)
+        self.details = self.get_patient()
         
-         #==============================VARIABLES======================================
-        self.patient_fname = tk.StringVar()
-        self.patient_lname = tk.StringVar()
+        #==============================VARIABLES======================================
+        self.vaccine = tk.StringVar()
         
-              #==============================FRAMES=========================================
+               #==============================FRAMES=========================================
         self.Form = tk.Frame(self.parent, height=200)
         self.Form.pack(side=tk.TOP, pady=20)
  
                  #==============================LABELS=========================================
  
-        self.lbl_search = tk.Label(self.Form, text = "Patient name:", font=('arial', 14), bd=15)
-        self.lbl_search.grid(row=0, sticky="w")
-        self.lbl_pfname = tk.Label(self.Form, text = self.name[0], font=('arial', 14), bd=15, fg='blue')
-        self.lbl_pfname.grid(row=0, column=1, sticky="w")
+        self.lbl_name = tk.Label(self.Form, text = "Patient name, NHS number:", font=('arial', 14), bd=15)
+        self.lbl_name.grid(row=0, sticky="w")
+        self.lbl_pname = tk.Label(self.Form, text = self.details[0], font=('arial', 14), bd=15, fg='blue')
+        self.lbl_pname.grid(row=1, sticky="w")
         self.lbl_text = tk.Label(self.Form) #error messages appear here
         self.lbl_text.grid(row=2, columnspan=2)
+        self.lbl_Vaccine = tk.Label(self.Form, text = "Vaccine:", font=('arial', 14), bd=15)
+        self.lbl_Vaccine.grid(row=3, sticky="w")
+        
  
  
                  #==============================ENTRY WIDGETS==================================
-        self.enter_patient_fname = tk.Entry(self.Form, textvariable=self.patient_fname, font=(14))
-        self.enter_patient_fname.grid(row=3)
-        self.enter_patient_lname = tk.Entry(self.Form, textvariable=self.patient_lname, font=(14))
-        self.enter_patient_lname.grid(row=3, column=1)
+        self.enter_vaccine = tk.Entry(self.Form, textvariable=self.vaccine, font=(14))
+        self.enter_vaccine.grid(row=3, column=1)
  
                  #==============================BUTTON WIDGETS=================================
-        self.btn_search_p = tk.Button(self.Form, text="Save", width=45, command=self.save, fg='green')
-        self.btn_search_p.grid(pady=25, row=4, columnspan=2)
+        self.btn_save = tk.Button(self.Form, text="Save", width=45, command=self.save, fg='green')
+        self.btn_save.grid(pady=25, row=4, columnspan=2)
          
         
     
     def get_patient(self):
         self.connect_to_db()
-        cursor.execute('SELECT fname, lname FROM Patients WHERE patientid = ?', (self.patient_id,))
+        cursor.execute('SELECT fname, lname, NHSno FROM Patients p, Patient_Record pr WHERE p.patientid = pr.patientid AND p.patientid = ?', (self.patient_id,))
         info = cursor.fetchall()
+        cursor.close()
+        conn.close
+        print(info)
         return info
     
     def save(self):
-        pass
+        self.connect_to_db()
+        vaccine = self.vaccine.get().strip()
+        if vaccine == '':
+            self.lbl_text.config(text="Data is missing", fg="red")
+        else:
+            vac = (self.details[0][2], self.patient_id, self.user['gpid'], dt.datetime.now(), vaccine)
+            dbu.insert_vaccine_record(conn, vac)
+            cursor.close()
+            conn.close()
+            self.btn_save.destroy()
 
     
     def connect_to_db(self):
@@ -82,5 +95,5 @@ class Add_vaccine:
 if __name__ == '__main__':
     root = tk.Tk()
 
-    Add_medical(root, patient_id=1)
+    Add_vaccine(root, patient_id=1)
     root.mainloop()

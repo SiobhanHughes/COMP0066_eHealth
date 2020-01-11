@@ -44,7 +44,7 @@ class Patient_records:
         elif self.record_type == 'prescription':
             titles = ['Date','Patient first name', 'Patient last name', 'GP first name', 'GP last name', 'NHS number', 'Medication', 'Dosage']
         elif self.record_type == 'vaccine':
-            titles = ['Date','Patient first name', 'Patient last name', 'NHS number', 'Vaccine']
+            titles = ['Date','Patient first name', 'Patient last name', 'GP first name', 'GP last name', 'NHS number', 'Vaccine']
         return titles
     
     def create_widgets(self):
