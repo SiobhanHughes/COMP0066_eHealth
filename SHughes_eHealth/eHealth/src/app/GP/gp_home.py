@@ -33,6 +33,9 @@ from src.app.GUI import search_results_window
 from src.app.GUI import user_info
 from src.app.GP import add_availability
 from src.app.GP import view_records
+from src.app.GP import add_medical
+from src.app.GP import add_prescription
+from src.app.GP import add_vaccine
 path.delete_dir()
 
 
@@ -61,7 +64,7 @@ class GP(tk.Frame):
 class Search(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       #self.user = track.load('user.pickle', 3)
+       self.user = track.load('user.pickle', 3)
        
         #==============================VARIABLES======================================
        self.patient_fname = tk.StringVar()
@@ -152,7 +155,7 @@ class Search(GP):
 class Appointments(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       #self.user = track.load('user.pickle', 3)
+       self.user = track.load('user.pickle', 3)
        
         #==============================VARIABLES======================================
        self.date_range = tk.StringVar()
@@ -261,7 +264,7 @@ class Appointments(GP):
 class Patient_Record(GP):
    def __init__(self, *args, **kwargs):
        GP.__init__(self, *args, **kwargs)
-       #self.user = track.load('user.pickle', 3)
+       self.user = track.load('user.pickle', 3)
        
         #==============================VARIABLES======================================
        self.patient_id = tk.StringVar()
@@ -329,7 +332,7 @@ class Patient_Record(GP):
         self.view_vaccine(patient_details[1])
         self.view_prescriptions(patient_details[1])
       else:
-        self.lbl_text.config(text="Error getting patient information", fg="red")
+        self.lbl_text.config(text="Error getting patient information", fg="red") #maybe remove this....
         
    def view_medical(self, patient_id_num):
        top = tk.Toplevel()
@@ -337,7 +340,7 @@ class Patient_Record(GP):
        get_info = view_records.Patient_records(view_medical.inner, patient_id=patient_id_num) #add entry widgets for details in the list above
        top.title("Patient Medical History")
        view_medical.pack(side="top", fill="both", expand=True)
-       width = 800
+       width = 1100
        height = 700
        screen_width = self.master.winfo_screenwidth()
        screen_height = self.master.winfo_screenheight()
@@ -352,7 +355,7 @@ class Patient_Record(GP):
        get_info = view_records.Patient_records(view_vaccine.inner, patient_id=patient_id_num, record_type='vaccine') #add entry widgets for details in the list above
        top.title("Patient Vaccine Record")
        view_vaccine.pack(side="top", fill="both", expand=True)
-       width = 800
+       width = 1100
        height = 700
        screen_width = self.master.winfo_screenwidth()
        screen_height = self.master.winfo_screenheight()
@@ -366,7 +369,7 @@ class Patient_Record(GP):
        get_info = view_records.Patient_records(view_prescription.inner, patient_id=patient_id_num, record_type='prescription') #add entry widgets for details in the list above
        top.title("Patient Presciptions")
        view_prescription.pack(side="top", fill="both", expand=True)
-       width = 800
+       width = 1100
        height = 700
        screen_width = self.master.winfo_screenwidth()
        screen_height = self.master.winfo_screenheight()
@@ -386,7 +389,7 @@ class Patient_Record(GP):
             top.title("View Patient information")
     
         view_info.pack(side="top", fill="both", expand=True)
-        width = 800
+        width = 1100
         height = 700
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
@@ -407,7 +410,7 @@ class Patient_Record(GP):
               top.title("Edit Patient information")
           
           edit_info.pack(side="top", fill="both", expand=True)
-          width = 800
+          width = 1100
           height = 700
           screen_width = self.master.winfo_screenwidth()
           screen_height = self.master.winfo_screenheight()
@@ -419,13 +422,48 @@ class Patient_Record(GP):
  
    
    def medical(self):
-       pass
+       patient_details = self.get_input()
+       if len(patient_details) == 2:
+           top = tk.Toplevel()
+           add_medical_history = add_medical.Add_medical(top, patient_details[1])
+           top.title("Add Patient Medical History")
+           width = 500
+           height = 600
+           screen_width = self.master.winfo_screenwidth()
+           screen_height = self.master.winfo_screenheight()
+           x = (screen_width/2) - (width/2)
+           y = (screen_height/2) - (height/2)
+           top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+
    
    def prescription(self):
-       pass
+       patient_details = self.get_input()
+       if len(patient_details) == 2:
+           top = tk.Toplevel()
+           add_script = add_prescription.Add_prescription(top, patient_details[1])
+           top.title("Add Prescription")
+           width = 500
+           height = 600
+           screen_width = self.master.winfo_screenwidth()
+           screen_height = self.master.winfo_screenheight()
+           x = (screen_width/2) - (width/2)
+           y = (screen_height/2) - (height/2)
+           top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+
    
    def vaccine(self):
-       pass
+       patient_details = self.get_input()
+       if len(patient_details) == 2:
+           top = tk.Toplevel()
+           add_vaccine_record = add_vaccine.Add_vaccine(top, patient_details[1])
+           top.title("Add Vaccine Record")
+           width = 500
+           height = 600
+           screen_width = self.master.winfo_screenwidth()
+           screen_height = self.master.winfo_screenheight()
+           x = (screen_width/2) - (width/2)
+           y = (screen_height/2) - (height/2)
+           top.geometry("%dx%d+%d+%d" % (width, height, x, y))
    
  
 class MainView(tk.Frame):

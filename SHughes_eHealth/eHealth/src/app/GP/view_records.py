@@ -1,5 +1,5 @@
 import tkinter as tk
-import tkinter.scrolledtext as scrolledtext
+from tkinter import scrolledtext
 
 import os
 import sys
@@ -60,9 +60,14 @@ class Patient_records:
 
                     self.label = tk.Label(self.labelframe, text=self.titles[i])
                     self.label.grid(row=0)
-
-                    self.show_details = tk.Label(self.labelframe, text=row[i])
-                    self.show_details.grid(row=1)
+                    
+                    if self.titles[i] == 'Record':
+                        self.textFrame = scrolledtext.ScrolledText(self.labelframe, width=50, bd=10, relief="raised")
+                        self.textFrame.grid(row=1)
+                        self.textFrame.insert('1.0', row[i])
+                    else:
+                        self.show_details = tk.Label(self.labelframe, text=row[i])
+                        self.show_details.grid(row=1)
                 
 
     def get_info(self):
@@ -87,6 +92,6 @@ class Patient_records:
 if __name__ == '__main__':
     root = tk.Tk()
 
-    Patient_records(root, patient_id=1, record_type='vaccine')
+    Patient_records(root, patient_id=2, record_type='medical')
     root.mainloop()
     
