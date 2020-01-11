@@ -28,6 +28,7 @@ from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
 from src.app.GUI import outter_scroll_frame
+from src.app.GUI import search_results_window
 from src.utilities import check_input as check
 path.delete_dir()
 

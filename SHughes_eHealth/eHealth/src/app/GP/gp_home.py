@@ -97,8 +97,28 @@ class Appointments(GP):
        self.btn_enter.grid(pady=25, row=7, columnspan=2)
 
    def view(self):
-       
-       pass
+       dates_entered = self.date_range.get().strip()
+       self.connect_to_db()
+       if check.check_dates_format(dates_entered) == 'error':
+            self.lbl_text.config(text="Error: dates not correctly formatted", fg="red")
+       else:
+           start, end = check.check_dates_format(dates_entered)
+           date_range = check.gen_dates(start, end)
+           gpid = self.user['gpid']
+           titles = ['Appointment date', 'Appointment time', 'Patient first name', 'Patient last name', 'Appointment Available']
+           sql = '''SELECT date(date_time), time(date_time), fname, lname, available
+                FROM Appointments a LEFT JOIN Patients p ON a.patientid = p.patientid WHERE date(date_time) = ? AND gpid = ?'''
+           for d in date_range:
+                info = (d, gpid)
+                cursor.execute(sql, info)
+                rows = cursor.fetchall()
+                if rows != []:
+                    self.apppointment_search_result(titles, rows)
+                elif rows == []:
+                    self.lbl_text.config(text="No Appointments for one or all of the entered dates", fg="red")
+       cursor.close()
+       conn.close()
+
 
    def enter(self):
        dates_entered = self.date_range.get().strip()
@@ -116,7 +136,9 @@ class Appointments(GP):
                    row = cursor.fetchall()
                    if row != []:
                        self.lbl_text.config(text="Error: You already added availability for some of these dates", fg="red")
+                       break
                else:
+                   self.lbl_text.config(text=" ")
                    self.add_availability(date_range)
        cursor.close()
        conn.close()
@@ -128,6 +150,20 @@ class Appointments(GP):
        available = add_availability.Add_time(add_times.inner, date_range)
        top.title("Add available times for appointments")
        add_times.pack(side="top", fill="both", expand=True)
+       width = 1100
+       height = 400
+       screen_width = self.master.winfo_screenwidth()
+       screen_height = self.master.winfo_screenheight()
+       x = (screen_width/2) - (width/2)
+       y = (screen_height/2) - (height/2)
+       top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+       
+   def apppointment_search_result(self, titles, rows):
+       top = tk.Toplevel()
+       appoint_win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
+       info = search_results_window.Search_results(appoint_win.inner, titles, rows)
+       top.title("Appointments")
+       appoint_win.pack(side="top", fill="both", expand=True)
        width = 1100
        height = 400
        screen_width = self.master.winfo_screenwidth()
