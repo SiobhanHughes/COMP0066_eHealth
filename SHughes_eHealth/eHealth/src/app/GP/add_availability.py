@@ -82,24 +82,18 @@ class Add_time(tk.Frame):
     
     def get_input(self):
         self.connect_to_db()
-        times = self.get_times()
-        print('times entered:', times)       
+        times = self.get_times()      
         dates = self.dates
-        print('dates entered:', dates)
         if times is not None:
             time_ranges = self.format_times(times)
-            print('times: ', time_ranges)
-        
         #dates list - pass one date together with time_ranges dictionary to generate appointments for each date (index match)
             if time_ranges is not None:
                 for i in range(len(dates)):
                     appointments = check.gen_appointments(dates[i], time_ranges[i])
                     for i in appointments:
-                        print(i)
                         date_time = i
                         gpid = self.user['gpid']
                         appoint = (gpid, date_time)
-                        print(appoint)
                         dbu.insert_appointment(conn, appoint)
                         self.save()
         conn.close()

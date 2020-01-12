@@ -35,7 +35,7 @@ from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
 from src.utilities import check_input as check
-from src.utilities import email
+from src.utilities import send_email
 from src.app.Admin import admin_home
 from src.app.GP import gp_home
 from src.app.GP import add_availability

@@ -1,9 +1,10 @@
-#template for tkinter home page taken from:
+#template for tkinter home page adapted from:
 #https://stackoverflow.com/questions/14817210/using-buttons-in-tkinter-to-navigate-to-different-pages-of-the-application
 
 #============================IMPORT============================================
 
 import tkinter as tk
+from tkinter import scrolledtext
 
 import os
 import sys
@@ -41,6 +42,9 @@ path.delete_dir()
 #============================GP HOME interface======================
 
 class GP(tk.Frame):
+    """ GP Home interface for eHealth system
+        GP can add availability for appointments, view appoints and manage medical records"""
+    
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
     
@@ -103,22 +107,26 @@ class Search(GP):
             p1 = dbu.search_patient_fname(conn, first)
             if p1 != []:
                 self.patient_search_result(titles, p1)
-                print(p1)
+                self.lbl_text.config(text="", fg="red")
+                conn.close()
             else:
                 self.lbl_text.config(text="Error: No such Patient found", fg="red")
         elif first == '' and last != '':
             p2 = dbu.search_patient_lname(conn, last)
             if p2 != []:
                 self.patient_search_result(titles, p2)
+                self.lbl_text.config(text="", fg="red")
+                conn.close()
             else:
                 self.lbl_text.config(text="Error: No such Patient found", fg="red")
         else:
             p3 = dbu.search_patient_fullname(conn, (first, last))
             if p3 != []:
                 self.patient_search_result(titles, p3)
+                self.lbl_text.config(text="", fg="red")
+                conn.close()
             else:
                 self.lbl_text.config(text="Error: No such Patient found", fg="red")
-        conn.close()
 
 
    
@@ -313,6 +321,7 @@ class Patient_Record(GP):
                    self.lbl_text.config(text="Error: Patient does not exist - check id number", fg="red")
                else:
                    type_id.append(user_id)
+                   self.lbl_text.config(text="", fg="red")
        return type_id
    
    def view(self):
@@ -323,8 +332,8 @@ class Patient_Record(GP):
         self.view_medical(patient_details[1])
         self.view_vaccine(patient_details[1])
         self.view_prescriptions(patient_details[1])
-      else:
-        self.lbl_text.config(text="Error getting patient information", fg="red") #maybe remove this....
+        cursor.close()
+        conn.close()
         
    def view_medical(self, patient_id_num):
        top = tk.Toplevel()
@@ -340,6 +349,7 @@ class Patient_Record(GP):
        y = (screen_height/2) - (height/2)
        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
 
+
    
    def view_vaccine(self, patient_id_num):
        top = tk.Toplevel()
@@ -354,7 +364,7 @@ class Patient_Record(GP):
        x = (screen_width/2) - (width/2)
        y = (screen_height/2) - (height/2)
        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
-   
+
    def view_prescriptions(self, patient_id_num):
        top = tk.Toplevel()
        view_prescription = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
@@ -368,6 +378,7 @@ class Patient_Record(GP):
        x = (screen_width/2) - (width/2)
        y = (screen_height/2) - (height/2)
        top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+
 
 
         
@@ -388,8 +399,7 @@ class Patient_Record(GP):
         x = (screen_width/2) - (width/2)
         y = (screen_height/2) - (height/2)
         top.geometry("%dx%d+%d+%d" % (width, height, x, y))
-        cursor.close()
-        conn.close()
+
    
    def edit(self):
       patient_details = self.get_input()
@@ -426,6 +436,8 @@ class Patient_Record(GP):
            x = (screen_width/2) - (width/2)
            y = (screen_height/2) - (height/2)
            top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+           cursor.close()
+           conn.close()
 
    
    def prescription(self):
@@ -441,6 +453,8 @@ class Patient_Record(GP):
            x = (screen_width/2) - (width/2)
            y = (screen_height/2) - (height/2)
            top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+           cursor.close()
+           conn.close()
 
    
    def vaccine(self):
@@ -456,6 +470,8 @@ class Patient_Record(GP):
            x = (screen_width/2) - (width/2)
            y = (screen_height/2) - (height/2)
            top.geometry("%dx%d+%d+%d" % (width, height, x, y))
+           cursor.close()
+           conn.close()
    
  
 class MainView(tk.Frame):

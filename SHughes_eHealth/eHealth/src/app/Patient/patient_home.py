@@ -1,4 +1,4 @@
-#template for tkinter home page taken from:
+#template for tkinter home page adapted from:
 #https://stackoverflow.com/questions/14817210/using-buttons-in-tkinter-to-navigate-to-different-pages-of-the-application
 
 #============================IMPORT============================================
@@ -38,6 +38,9 @@ path.delete_dir()
 #============================PATIENT HOME interface======================
 
 class Patient(tk.Frame):
+    """ Patient Home Interface for eHealth system
+        Patient can book appointments, view and cancel their existing appointments"""
+    
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
     
@@ -83,6 +86,7 @@ class Cancel(Patient):
        rows = cursor.fetchall()
        if rows != []:
             self.apppointment_search_result(titles, rows)
+            self.lbl_text.config(text="", fg="red")
        elif rows == []:
             self.lbl_text.config(text="You do not have any appointments booked", fg="red")
        cursor.close()
@@ -93,7 +97,7 @@ class Cancel(Patient):
        top = tk.Toplevel()
        appoint_win = outter_scroll_frame.ScrolledFrame(top) #open window that can scroll
        info = search_results_window.Search_results(appoint_win.inner, titles, rows)
-       top.title("You Appointments")
+       top.title("Your Appointments")
        appoint_win.pack(side="top", fill="both", expand=True)
        width = 1100
        height = 400
@@ -154,7 +158,6 @@ class Book(Patient):
                date_range = check.gen_dates(start, end)
                titles = ['Appointment date', 'Appointment time', 'GP first name', 'GP last name', 'Book']
                now = dt.datetime.now() + dt.timedelta(hours=2)
-               print(now)
                sql = '''SELECT date(date_time), time(date_time), g.fname, g.lname, appointmentid
                     FROM Appointments a, GPs g WHERE a.gpid = g.gpid AND available = 'yes' AND date_time > ? AND date(date_time) = ?'''
                for d in date_range:
@@ -230,3 +233,4 @@ if __name__ == "__main__":
     root.wm_geometry("900x900")
     main.bind('<Destroy>', close)
     root.mainloop()
+    

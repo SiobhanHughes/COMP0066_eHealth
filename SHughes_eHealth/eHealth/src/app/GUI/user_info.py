@@ -156,8 +156,6 @@ class Info_form:
                 entered.append(dt.date.today())
                 gp = tuple(entered)
                 dbu.insert_gp(conn, gp)
-                cursor.close()
-                conn.close()
                 self.save()
         elif self.mode == 'edit':
             if check.tel_format(entered[5]) != 'tel':
@@ -166,9 +164,9 @@ class Info_form:
                 entered.append(self.user_id)
                 gp = tuple(entered)
                 dbu.update_gp(conn, gp)
-                cursor.close()
-                conn.close()
                 self.save()
+        cursor.close()
+        conn.close()
         
     def check_patient(self, entered):
         self.connect_to_db()
@@ -197,8 +195,6 @@ class Info_form:
                 patient_record = (entered[15], patient_id, date_birth, entered[17], entered[18], entered[19],
                                   entered[20], entered[21], entered[22])
                 dbu.insert_patient_record(conn, patient_record)
-                cursor.close()
-                conn.close()
                 self.save()
         elif self.mode == 'edit':
             if check.tel_format(entered[5]) != 'tel':
@@ -216,9 +212,9 @@ class Info_form:
                 dbu.update_patient(conn, patient)
                 patient_record = (date_birth, entered[15], entered[16], entered[17], entered[18], entered[19], entered[20], self.user_id)
                 dbu.update_patient_record(conn, patient_record)
-                cursor.close()
-                conn.close()
                 self.save()
+        cursor.close()
+        conn.close()
                 
             
     def connect_to_db(self):

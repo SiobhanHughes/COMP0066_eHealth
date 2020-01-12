@@ -12,9 +12,6 @@ import binascii
 import sqlite3
 from sqlite3 import Error
 
-import open_home
-import passwd_utilities as pwdu
-
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
 # delete file path for eHealth directory from sys.path
@@ -22,6 +19,8 @@ import get_path_utilities as path
 current = path.get_current_dir()
 eHealth_dir = path.getDir(current, 3)
 path.insert_dir(eHealth_dir)
+from src.app.launch import open_home
+from src.app.launch import passwd_utilities as pwdu
 from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track

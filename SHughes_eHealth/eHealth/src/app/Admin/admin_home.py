@@ -13,6 +13,7 @@ import sqlite3
 from sqlite3 import Error
 
 import datetime as dt
+from dateutil.relativedelta import relativedelta
 import re
 
 # get file path for eHealth directory and add it to sys.path 
@@ -25,6 +26,7 @@ path.insert_dir(eHealth_dir)
 from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
+from src.utilities import send_email
 from src.app.GUI import outter_scroll_frame
 from src.app.GUI import search_results_window
 from src.app.GUI import user_info
@@ -105,8 +107,19 @@ class Homepage(Admin):
        self.btn_clear = tk.Button(self.Form, text="Clear all fields", width=45, command=self.clear)
        self.btn_clear.grid(pady=25, row=10, columnspan=2)
        
-   def reminder_email(self):  #complete this!!!
-       pass
+   def reminder_email(self):
+       day =  dt.date.today() + relativedelta(days=1)
+       sql = '''SELECT email from Patients p, Appointments a WHERE p.patientid = a.patientid
+                AND date(a.date_time) = ? '''
+       self.connect_to_db()
+       cursor.execute(sql, (day,))
+       rows = cursor.fetchall()
+       if rows == []:
+           return None
+       else:
+           message = 'This is a reminder from the eHealth system that you have a GP appointment tomorrow.\nIf you are unable to attend, please log in to your account and cancel your appointment.'
+           for email in rows:
+               send_email.send_email(email, message)
    
    def search_patient(self):
        first = self.patient_fname.get().strip()
