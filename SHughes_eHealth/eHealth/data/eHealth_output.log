@@ -224,3 +224,36 @@
 2020-01-11 22:16:48,463 - gp_home - INFO - GP logged out. Widgets destroyed
 2020-01-11 22:16:48,463 - gp_home - INFO - user.pickle deleted - new user can log in
 2020-01-11 22:16:50,637 - login - INFO - Application closed
+2020-01-11 22:50:59,731 - login - INFO - Result of sql query for gp email login: (1, 'Jane', 'Allen', 'jane_allen@gmail.com', '3ec4b70a4a13917f650a97f15a4df2f0be39b3d187dd0023353bad525eabbd9ae39b38e437a3aabc17284f60ba988859591c3a0379e6e40c943344ad3a7057fe3e097bef60d572be7256fa54fa670cbbce0c867339fc730a56754637f423c9e1', 'yes')
+2020-01-11 22:50:59,733 - login - INFO - Result of sql query for patient email login: None
+2020-01-11 22:50:59,817 - login - INFO - GP logged in.
+2020-01-11 22:51:41,889 - gp_home - INFO - GP logged out. Widgets destroyed
+2020-01-11 22:51:41,890 - gp_home - INFO - user.pickle deleted - new user can log in
+2020-01-11 22:51:44,025 - login - INFO - Application closed
+2020-01-11 23:53:15,111 - create_account - INFO - Result of sql query to select for GP email: None
+2020-01-11 23:53:15,113 - create_account - INFO - Result of sql query to select for Patient email: ('nhughes@gmail.com',)
+2020-01-11 23:53:15,199 - create_account - INFO - Patient account created
+2020-01-11 23:53:31,193 - login - INFO - Result of sql query for gp email login: None
+2020-01-11 23:53:31,193 - login - INFO - Result of sql query for patient email login: (1, 'Nicola', 'Hughes', 'nhughes@gmail.com', '8ab5f7f0476dde82d7f9440ed902ae448e4cf8f309bde031576f2d5b8fb0fd73a0ac5b2093206c0c1787a60844d5cc6d70d2b62b7e5fb15bef266cd824281f9a2a5fc8ba436c586c93fd073f628a2c5a58ef3f725a3be42606aca10842ae3a2f', 'NHS001', 'yes')
+2020-01-11 23:53:31,280 - login - INFO - Patient logged in.
+2020-01-11 23:53:40,602 - login - INFO - Application closed
+2020-01-11 23:55:14,553 - login - INFO - Result of sql query for gp email login: None
+2020-01-11 23:55:14,553 - login - INFO - Result of sql query for patient email login: (1, 'Nicola', 'Hughes', 'nhughes@gmail.com', '8ab5f7f0476dde82d7f9440ed902ae448e4cf8f309bde031576f2d5b8fb0fd73a0ac5b2093206c0c1787a60844d5cc6d70d2b62b7e5fb15bef266cd824281f9a2a5fc8ba436c586c93fd073f628a2c5a58ef3f725a3be42606aca10842ae3a2f', 'NHS001', 'yes')
+2020-01-11 23:55:14,641 - login - INFO - Patient logged in.
+2020-01-11 23:55:24,529 - login - INFO - Application closed
+2020-01-12 00:26:10,534 - login - INFO - Result of sql query for gp email login: None
+2020-01-12 00:26:10,535 - login - INFO - Result of sql query for patient email login: (1, 'Nicola', 'Hughes', 'nhughes@gmail.com', '8ab5f7f0476dde82d7f9440ed902ae448e4cf8f309bde031576f2d5b8fb0fd73a0ac5b2093206c0c1787a60844d5cc6d70d2b62b7e5fb15bef266cd824281f9a2a5fc8ba436c586c93fd073f628a2c5a58ef3f725a3be42606aca10842ae3a2f', 'NHS001', 'yes')
+2020-01-12 00:26:10,621 - login - INFO - Patient logged in.
+2020-01-12 00:27:22,336 - login - INFO - Application closed
+2020-01-12 00:28:33,444 - login - INFO - Result of sql query for gp email login: None
+2020-01-12 00:28:33,445 - login - INFO - Result of sql query for patient email login: (1, 'Nicola', 'Hughes', 'nhughes@gmail.com', '8ab5f7f0476dde82d7f9440ed902ae448e4cf8f309bde031576f2d5b8fb0fd73a0ac5b2093206c0c1787a60844d5cc6d70d2b62b7e5fb15bef266cd824281f9a2a5fc8ba436c586c93fd073f628a2c5a58ef3f725a3be42606aca10842ae3a2f', 'NHS001', 'yes')
+2020-01-12 00:28:33,531 - login - INFO - Patient logged in.
+2020-01-12 00:29:02,664 - login - INFO - Application closed
+2020-01-12 00:29:57,867 - login - INFO - Result of sql query for gp email login: None
+2020-01-12 00:29:57,868 - login - INFO - Result of sql query for patient email login: (1, 'Nicola', 'Hughes', 'nhughes@gmail.com', '8ab5f7f0476dde82d7f9440ed902ae448e4cf8f309bde031576f2d5b8fb0fd73a0ac5b2093206c0c1787a60844d5cc6d70d2b62b7e5fb15bef266cd824281f9a2a5fc8ba436c586c93fd073f628a2c5a58ef3f725a3be42606aca10842ae3a2f', 'NHS001', 'yes')
+2020-01-12 00:29:57,953 - login - INFO - Patient logged in.
+2020-01-12 00:30:59,160 - login - INFO - Application closed
+2020-01-12 00:46:17,614 - login - INFO - Result of sql query for gp email login: None
+2020-01-12 00:46:17,615 - login - INFO - Result of sql query for patient email login: (1, 'Nicola', 'Hughes', 'nhughes@gmail.com', '8ab5f7f0476dde82d7f9440ed902ae448e4cf8f309bde031576f2d5b8fb0fd73a0ac5b2093206c0c1787a60844d5cc6d70d2b62b7e5fb15bef266cd824281f9a2a5fc8ba436c586c93fd073f628a2c5a58ef3f725a3be42606aca10842ae3a2f', 'NHS001', 'yes')
+2020-01-12 00:46:17,702 - login - INFO - Patient logged in.
+2020-01-12 00:47:43,494 - login - INFO - Application closed
