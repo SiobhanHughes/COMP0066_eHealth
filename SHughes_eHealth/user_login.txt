@@ -40,5 +40,5 @@ password: JaneAllen81!
 
 2.
 email: theresa_chng@gmail.com
-password: Not created (NULL in database) - can use to create new account
+password: Theresa50&
 

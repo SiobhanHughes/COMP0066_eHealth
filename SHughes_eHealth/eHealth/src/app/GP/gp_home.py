@@ -216,7 +216,7 @@ class Appointments(GP):
        else:
            start, end = check.check_dates_format(dates_entered)
            if start <= dt.date.today():
-               self.lbl_text.config(text="Error: to add appointments you need to enter a date in the furture", fg="red")
+               self.lbl_text.config(text="Error: to add appointments you need to enter a date in the future", fg="red")
            else:
                date_range = check.gen_dates(start, end)
                for d in date_range:
