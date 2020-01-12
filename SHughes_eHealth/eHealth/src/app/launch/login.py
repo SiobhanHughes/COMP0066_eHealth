@@ -57,6 +57,13 @@ path.delete_dir()
 #============================Interface for LOGIN to open main/root window======================
 
 class Login(tk.Frame):
+    """ Launch the eHealth application. Login window opens as root window for application.
+        Closing the login window (root) closes the entire application.
+        Login accepts 3 users:
+        1. Amdim (login email field is admin)
+        2. GP (login using email registered with the system)
+        3. Patient (login using email registered with the system)
+        Successful login opens user specific Home window (toplevel)"""
     
     def __init__(self, master, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
@@ -94,7 +101,6 @@ class Login(tk.Frame):
         #==============================BUTTON WIDGETS=================================
         self.btn_login = tk.Button(self.Form, text="Login", width=45, command=self.Login)
         self.btn_login.grid(pady=25, row=3, columnspan=2)
-        self.btn_login.bind('<Return>', self.Login)
         self.btn_create = tk.Button(self.Form, text="Create", width=45, command=self.createAC_Window)
         self.btn_create.grid(pady=25, row=5, columnspan=2)
 
@@ -129,14 +135,12 @@ class Login(tk.Frame):
         row = cursor.fetchone()
         cursor.close()
         conn.close()
-        print(row[0])
         if row[0] == 'admin' and entered_passwd != 'admin':
             self.lbl_text.config(text="Admin entered incorrect password", fg="red")
             self.EMAIL.set("")
             self.PASSWORD.set("") 
         elif row[0] == 'admin' and entered_passwd == 'admin':
             user = {'type': 'admin'}
-            print(user)
             track.store(user, 3) #admin is logged in (track) - ask to change default password
             self.lbl_text.config(text="")
             self.admin_passwd() #open window - Change default admim password
@@ -146,7 +150,6 @@ class Login(tk.Frame):
             storedpasswd = row[0]
             if pwdu.verify_password(storedpasswd, entered_passwd):
                 user = {'type': 'admin'}
-                print(user)
                 track.store(user, 3) #admin is logged in (track)
                 self.lbl_text.config(text="")
                 self.EMAIL.set("")
@@ -161,19 +164,15 @@ class Login(tk.Frame):
         self.connect_to_db()
         cursor.execute(self.gp_login_query(), (entered_email,))
         gp_login = cursor.fetchone()
-        logging.info('Result of sql query for gp email login: ' + str(gp_login))
-        print(gp_login)
         cursor.execute(self.patient_login_query(),(entered_email,))
         patient_login = cursor.fetchone()
-        logging.info('Result of sql query for patient email login: ' + str(patient_login))
-        print(patient_login)
         cursor.close()
         conn.close()
         if gp_login is not None and gp_login[4] is None: #no password created
             self.lbl_text.config(text="Please create an account", fg="green")
             self.EMAIL.set("")
             self.PASSWORD.set("")
-        elif gp_login is not None and gp_login[5] == 'no':
+        elif gp_login is not None and gp_login[5] == 'no': #gp account deactivated
             self.lbl_text.config(text="Your account has been deactivated. Please contact the Admin.", fg="red")
             self.EMAIL.set("")
             self.PASSWORD.set("")
@@ -181,7 +180,7 @@ class Login(tk.Frame):
             self.lbl_text.config(text="Please create an account", fg="green")
             self.EMAIL.set("")
             self.PASSWORD.set("")
-        elif patient_login is not None and patient_login[6] == 'no':
+        elif patient_login is not None and patient_login[6] == 'no': #patient account deactivated
             self.lbl_text.config(text="Your account has been deactivated. Please contact the Admin.", fg="red")
             self.EMAIL.set("")
             self.PASSWORD.set("")
@@ -189,7 +188,6 @@ class Login(tk.Frame):
             storedpasswd = gp_login[4]
             if pwdu.verify_password(storedpasswd, entered_passwd):
                 user = {'type': 'gp', 'gpid': gp_login[0], 'fname': gp_login[1], 'lname': gp_login[2], 'email': gp_login[3]}
-                print(user)
                 track.store(user, 3) #gp is logged in (track)
                 self.lbl_text.config(text="")
                 self.EMAIL.set("")
@@ -205,7 +203,6 @@ class Login(tk.Frame):
                 user = {'type': 'patient', 'patientid': patient_login[0],
                         'fname': patient_login[1], 'lname': patient_login[2],
                         'email': patient_login[3], 'NHSno': patient_login[5]}
-                print(user)
                 track.store(user, 3) #patient is logged in (track)
                 self.lbl_text.config(text="")
                 self.EMAIL.set("")
@@ -216,7 +213,7 @@ class Login(tk.Frame):
                 self.EMAIL.set("")
                 self.PASSWORD.set("") 
         else:
-            self.lbl_text.config(text="Invalid username or password", fg="red")
+            self.lbl_text.config(text="Invalid username or password.", fg="red")
             self.EMAIL.set("")
             self.PASSWORD.set("")
         
@@ -234,7 +231,6 @@ class Login(tk.Frame):
         return patient_sql
     
     def admin_passwd(self): #open Change Admin Password window(Toplevel)
-        global change
         top = tk.Toplevel()
         change = change_admin_passwd.Change_admin_passwd(top)
         top.title("Welcome to the eHealth system")
@@ -248,7 +244,6 @@ class Login(tk.Frame):
         top.geometry("%dx%d+%d+%d" % (width, height, x, y))
     
     def createAC_Window(self): #open Create account window (Toplevel)
-        global create
         top = tk.Toplevel()
         create = create_account.Create_account(top)
         top.title("Welcome to the eHealth system")

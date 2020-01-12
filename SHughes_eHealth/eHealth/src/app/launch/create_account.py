@@ -32,13 +32,10 @@ path.delete_dir()
 
 #============================CREATE ACCOUNT interface======================
 
-log_file = path.dataDir_path('eHealth_output.log', 3)
-logging.basicConfig(level=logging.DEBUG,
-                    filename=log_file,
-                    filemode ='a',
-                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
-
 class Create_account(tk.Frame):
+    """ Using an email registered with the eHealth system (Admin registers GPs and Patients with the system),
+        users create an account by entering a password. """
+    
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
         
@@ -55,20 +52,20 @@ class Create_account(tk.Frame):
         self.Form.pack(side=tk.TOP, pady=20)
         
         #==============================LABELS=========================================
-        self.lbl_title = tk.Label(self.Top, text = "Create an account for the eHealth system", font=('arial', 15))
+        self.lbl_title = tk.Label(self.Top, text = "Create an account for the eHealth system", font=('arial', 18))
         self.lbl_title.pack(fill=tk.X)
-        self.lbl_admin = tk.Label(self.Form, text = "Use the email that you gave at the time of registering with the GP Practice to create an account. ", font=('arial', 15), bd=15, fg='blue')
-        self.lbl_admin.grid(row=0, sticky="e")
+        self.lbl_admin = tk.Label(self.Form, text = "Use the email that you gave at the time of registering with the Practice to create an account. ", font=('arial', 15), bd=15, fg='blue')
+        self.lbl_admin.grid(row=0, sticky="w")
         self.lbl_email = tk.Label(self.Form, text = "email:", font=('arial', 14), bd=15)
-        self.lbl_email.grid(row=1, sticky="e")
+        self.lbl_email.grid(row=1, sticky="w")
         self.lbl_admin = tk.Label(self.Form, text = "Password requirements: ", font=('arial', 15), bd=15, fg='green')
-        self.lbl_admin.grid(row=2, sticky="e")
+        self.lbl_admin.grid(row=2, sticky="w")
         self.lbl_admin = tk.Label(self.Form, text = "At least 8 characters, A capital letter, one number, one special characrter ", font=('arial', 15), bd=15, fg='green')
-        self.lbl_admin.grid(row=3, sticky="e")
+        self.lbl_admin.grid(row=3, sticky="w")
         self.lbl_password1 = tk.Label(self.Form, text = "Password:", font=('arial', 14), bd=15)
-        self.lbl_password1.grid(row=4, sticky="e")
+        self.lbl_password1.grid(row=4, sticky="w")
         self.lbl_password2 = tk.Label(self.Form, text = "Re-enter Password:", font=('arial', 14), bd=15)
-        self.lbl_password2.grid(row=5, sticky="e")
+        self.lbl_password2.grid(row=5, sticky="w")
         self.lbl_text = tk.Label(self.Form)
         self.lbl_text.grid(row=6, columnspan=2)
 
@@ -83,7 +80,6 @@ class Create_account(tk.Frame):
         #==============================BUTTON WIDGETS=================================
         self.btn_login = tk.Button(self.Form, text="Create", width=45, command=self.check_email)
         self.btn_login.grid(pady=25, row=7, columnspan=2)
-        self.btn_login.bind('<Return>', self.check_email)
         
         #==============================METHODS=================================
         
@@ -99,12 +95,8 @@ class Create_account(tk.Frame):
         email = self.EMAIL.get().strip()
         cursor.execute(' SELECT email FROM GPs WHERE email = ? ', (email,))
         gp = cursor.fetchone()
-        logging.info('Result of sql query to select for GP email: ' + str(gp))
-        print(gp)
         cursor.execute(' SELECT email FROM Patients WHERE email = ? ', (email,))
         patient = cursor.fetchone()
-        logging.info('Result of sql query to select for Patient email: ' + str(patient))
-        print(patient)
         conn.commit()
         cursor.close()
         conn.close()
@@ -125,7 +117,6 @@ class Create_account(tk.Frame):
     def passwd(self, user, email):
         passwd1 = self.PASSWORD1.get().strip()
         passwd2 = self.PASSWORD2.get().strip()
-        print(email)
         if passwd1 == "" or passwd2 == "":
             self.lbl_text.config(text="Please complete the required password fields!", fg="red")
         elif passwd1 != passwd2:
@@ -139,10 +130,8 @@ class Create_account(tk.Frame):
         else:
             self.connect_to_db()
             pwd = pwdu.hash_password(passwd1)
-            print(pwd)
             if user == 'GP':
                 cursor.execute(' UPDATE GPs SET passwd = ? WHERE email = ? ', (pwd, email))
-                logging.info('GP account created')
                 conn.commit()
                 cursor.close()
                 conn.close()
@@ -150,7 +139,6 @@ class Create_account(tk.Frame):
                 self.destroy()
             elif user == 'Patient':
                 cursor.execute(' UPDATE Patients SET passwd = ? WHERE email = ? ', (pwd, email))
-                logging.info('Patient account created')
                 conn.commit()
                 cursor.close()
                 conn.close()
@@ -158,7 +146,6 @@ class Create_account(tk.Frame):
                 self.destroy()
      
     def message_box(self):
-        global message
         message = tk.Toplevel()
         message.title("Welcome to the eHealth system")
         width = 500

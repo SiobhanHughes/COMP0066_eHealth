@@ -33,7 +33,7 @@ class Search_results:
                 if titles[i] == 'Cancel':
                     tk.Button(self.labelframe, text='cancel', width=20, command=lambda c=rows[x][i]: self.cancel_appoint(c), fg='red').grid(row=0, column=i)
                 elif titles[i] == 'Book':
-                    tk.Button(self.labelframe, text='book', width=20, command=lambda b=rows[x][i]: self.book_appoint(b), fg='red').grid(row=0, column=i)
+                    tk.Button(self.labelframe, text='book', width=20, command=lambda b=rows[x][i]: self.book_appoint(b), fg='blue').grid(row=0, column=i)
                 else:
                     tk.Label(self.labelframe, text=titles[i]).grid(row=0, column=i)
                 for j in range(len(titles)):

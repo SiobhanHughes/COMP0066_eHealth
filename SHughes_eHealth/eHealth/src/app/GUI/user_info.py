@@ -33,9 +33,9 @@ path.delete_dir()
 class Info_form:
     """ Generate form (inner widgets for scrollable window/frame - see outter_scroll_frame.py) 
         for adding, viewing or editing a GP or Patient.
-        Add info: Admin can enter all detales in the required fields and save the information to the database
-        View info: Admin can view patient for GP info. GP can view patient info
-        Edit info: Admin can edit patient for GP info."""
+        Add info: Admin can enter all details in the required fields and save the information to the database
+        View info: Admin can view Patient or GP info. GP can view patient info
+        Edit info: Admin can edit Patient or GP info."""
     
     def __init__(self, parent, user_type=None, mode='add', user_id=None, *args, **kwargs):
         self.parent = parent
@@ -89,7 +89,7 @@ class Info_form:
                     self.show_email = tk.Label(self.labelframe, text=self.details[i]) #can not edit email as this is used to login
                     self.show_email.grid(row=1)
                 elif self.titles[i] == 'NHS number':
-                    self.show_num = tk.Label(self.labelframe, text=self.details[i]) #can not edit email as this is used to login
+                    self.show_num = tk.Label(self.labelframe, text=self.details[i]) #can not edit NHSno as this is primary key for Patient Records
                     self.show_num.grid(row=1)
                 else:
                     self.entry.insert(0, self.details[i])
@@ -156,6 +156,8 @@ class Info_form:
                 entered.append(dt.date.today())
                 gp = tuple(entered)
                 dbu.insert_gp(conn, gp)
+                cursor.close()
+                conn.close()
                 self.save()
         elif self.mode == 'edit':
             if check.tel_format(entered[5]) != 'tel':
@@ -163,11 +165,10 @@ class Info_form:
             else:
                 entered.append(self.user_id)
                 gp = tuple(entered)
-                print(gp)
                 dbu.update_gp(conn, gp)
+                cursor.close()
+                conn.close()
                 self.save()
-        cursor.close()
-        conn.close()
         
     def check_patient(self, entered):
         self.connect_to_db()
@@ -196,6 +197,8 @@ class Info_form:
                 patient_record = (entered[15], patient_id, date_birth, entered[17], entered[18], entered[19],
                                   entered[20], entered[21], entered[22])
                 dbu.insert_patient_record(conn, patient_record)
+                cursor.close()
+                conn.close()
                 self.save()
         elif self.mode == 'edit':
             if check.tel_format(entered[5]) != 'tel':
@@ -213,9 +216,9 @@ class Info_form:
                 dbu.update_patient(conn, patient)
                 patient_record = (date_birth, entered[15], entered[16], entered[17], entered[18], entered[19], entered[20], self.user_id)
                 dbu.update_patient_record(conn, patient_record)
+                cursor.close()
+                conn.close()
                 self.save()
-        cursor.close()
-        conn.close()
                 
             
     def connect_to_db(self):

@@ -30,7 +30,6 @@ class Home:
     """ Opens Home windows - Appropriate Home window called when user logs in """
     
     def Admin_Window(self): #open Admin home window (Toplevel)
-        global Admin
         top = tk.Toplevel()
         Admin = admin_home.MainView(top)
         top.title("Welcome to the eHealth system")
@@ -44,7 +43,6 @@ class Home:
         top.geometry("%dx%d+%d+%d" % (width, height, x, y))
         
     def GP_Window(self): #open GP home window (Toplevel)
-        global GP
         top = tk.Toplevel()
         GP = gp_home.MainView(top)
         top.title("Welcome to the eHealth system")
@@ -58,7 +56,6 @@ class Home:
         top.geometry("%dx%d+%d+%d" % (width, height, x, y))
         
     def Patient_Window(self): #open Pateint home window (Toplevel)
-        global Patient
         top = tk.Toplevel()
         Patient = patient_home.MainView(top)
         top.title("Welcome to the eHealth system")

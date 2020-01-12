@@ -1,4 +1,4 @@
-# How to create functions to manipulate sqlite tables/queries taken from: 
+# How to create functions to manipulate sqlite tables/queries adapted from: 
 # https://www.sqlitetutorial.net/sqlite-python/insert/
 # https://www.sqlitetutorial.net/sqlite-python/update/
 
@@ -181,44 +181,44 @@ def update_patient_record(conn, patient_record):
 
 
 #==============================Patient makes appointment======================================
-def book_appointment(conn, book):
-    """
-    update Appointments table - add patientid and set available to 'no'
-    :param conn: Connection object
-    :params book:
-    """
-    sql = ''' UPDATE Appointments
-              SET patientid = ? , 
-                available = "no" 
-              WHERE gpid = ?,
-              AND date = ?,
-              AND time = ? '''
-    try:
-        cur = conn.cursor()
-        cur.execute(sql, book)
-        conn.commit()
-    except Error as e:
-        print(e)
+# def book_appointment(conn, book):
+#     """
+#     update Appointments table - add patientid and set available to 'no'
+#     :param conn: Connection object
+#     :params book:
+#     """
+#     sql = ''' UPDATE Appointments
+#               SET patientid = ? , 
+#                 available = "no" 
+#               WHERE gpid = ?,
+#               AND date = ?,
+#               AND time = ? '''
+#     try:
+#         cur = conn.cursor()
+#         cur.execute(sql, book)
+#         conn.commit()
+#     except Error as e:
+#         print(e)
     
 #==============================Patient cancels appointment======================================
-def cancel_appointment(conn, cancel):
-    """
-    update Appointments table - remove patientid and set available to 'yes'
-    :param conn: Connection object
-    :params cance;:
-    """
-    sql = ''' UPDATE Appointments
-              SET patientid = NULL , 
-                available = "yes" 
-              WHERE gpid = ?,
-              AND date = ?,
-              AND time = ? '''
-    try:
-        cur = conn.cursor()
-        cur.execute(sql, cancel)
-        conn.commit()
-    except Error as e:
-        print(e)
+# def cancel_appointment(conn, cancel):
+#     """
+#     update Appointments table - remove patientid and set available to 'yes'
+#     :param conn: Connection object
+#     :params cance;:
+#     """
+#     sql = ''' UPDATE Appointments
+#               SET patientid = NULL , 
+#                 available = "yes" 
+#               WHERE gpid = ?,
+#               AND date = ?,
+#               AND time = ? '''
+#     try:
+#         cur = conn.cursor()
+#         cur.execute(sql, cancel)
+#         conn.commit()
+#     except Error as e:
+#         print(e)
         
         
 #==============================Search Patient======================================

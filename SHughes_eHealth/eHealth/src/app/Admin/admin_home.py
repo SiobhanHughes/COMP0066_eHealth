@@ -1,4 +1,4 @@
-#template for tkinter home page taken from:
+#template for tkinter home page adapted from:
 #https://stackoverflow.com/questions/14817210/using-buttons-in-tkinter-to-navigate-to-different-pages-of-the-application
 
 #============================IMPORT============================================
@@ -34,6 +34,14 @@ path.delete_dir()
 #============================ADMIN HOME interface======================
 
 class Admin(tk.Frame):
+    
+    """ Interface for Adim to use the eHealth system.
+        Admin adds new users (GPs and Patients) to the system.
+        Admin can also search for user information, delete users, deactivate/reactivate user accounts 
+        and edit user information.
+        Admin can send emails notifying Patients that they have an appointment 
+        (Reminder one day before apppointment). """
+    
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
     
@@ -112,22 +120,26 @@ class Homepage(Admin):
             p1 = dbu.search_patient_fname(conn, first)
             if p1 != []:
                 self.patient_search_result(titles, p1)
-                print(p1)
+                self.lbl_text.config(text="", fg="red")
+                conn.close()
             else:
                 self.lbl_text.config(text="Error: No such Patient found", fg="red")
         elif first == '' and last != '':
             p2 = dbu.search_patient_lname(conn, last)
             if p2 != []:
                 self.patient_search_result(titles, p2)
+                self.lbl_text.config(text="", fg="red")
+                conn.close()
             else:
                 self.lbl_text.config(text="Error: No such Patient found", fg="red")
         else:
             p3 = dbu.search_patient_fullname(conn, (first, last))
             if p3 != []:
                 self.patient_search_result(titles, p3)
+                self.lbl_text.config(text="", fg="red")
+                conn.close()
             else:
                 self.lbl_text.config(text="Error: No such Patient found", fg="red")
-        conn.close()
 
    
    def search_gp(self):
@@ -142,22 +154,26 @@ class Homepage(Admin):
            gp1 = dbu.search_gp_fname(conn, first)
            if gp1 != []:
                self.gp_search_result(titles, gp1)
-               print(gp1)
+               self.lbl_text.config(text="", fg="red")
+               conn.close()
            else:
                self.lbl_text.config(text="Error: No such GP found", fg="red")
        elif first == '' and last != '':
            gp2 = dbu.search_gp_lname(conn, last)
            if gp2 != []:
                self.gp_search_result(titles, gp2)
+               self.lbl_text.config(text="", fg="red")
+               conn.close()
            else:
                self.lbl_text.config(text="Error: No such GP found", fg="red")
        else:
            gp3 = dbu.search_gp_fullname(conn, (first, last))
            if gp3 != []:
                self.patient_search_result(titles, gp3)
+               self.lbl_text.config(text="", fg="red")
+               conn.close()
            else:
                self.lbl_text.config(text="Error: No such GP found", fg="red")
-       conn.close()
    
    def clear(self):
        self.patient_fname.set("")
@@ -232,6 +248,8 @@ class Manage(Admin):
         self.btn_delete.grid(pady=25, row=8, columnspan=2)
         self.btn_deactivate = tk.Button(self.Form, text="Deactivate", width=45, command=self.deactivate)
         self.btn_deactivate.grid(pady=25, row=9, columnspan=2)
+        self.btn_reactivate = tk.Button(self.Form, text="Reactivate", width=45, command=self.reactivate)
+        self.btn_reactivate.grid(pady=25, row=10, columnspan=2)
 
     
     def get_input(self):
@@ -265,6 +283,7 @@ class Manage(Admin):
                     self.lbl_text.config(text="Error: Patient does not exist - check id number", fg="red")
                 else:
                     type_id.append(user_id)
+                    self.lbl_text.config(text="", fg="red")
             elif user_type == 'GP':
                 cursor.execute('SELECT * from GPs WHERE gpid = ?', (user_id,))
                 gp = cursor.fetchall()
@@ -272,6 +291,7 @@ class Manage(Admin):
                     self.lbl_text.config(text="Error: GP does not exist - check id number", fg="red")
                 else:
                     type_id.append(user_id)
+                    self.lbl_text.config(text="", fg="red")
         return type_id
     
     def view(self):
@@ -296,8 +316,6 @@ class Manage(Admin):
            top.geometry("%dx%d+%d+%d" % (width, height, x, y))
            cursor.close()
            conn.close()
-       else:
-           self.lbl_text.config(text="Error getting details", fg="red")
 
     
     def edit(self):
@@ -322,8 +340,6 @@ class Manage(Admin):
            top.geometry("%dx%d+%d+%d" % (width, height, x, y))
            cursor.close()
            conn.close()
-       else:
-           self.lbl_text.config(text="Error getting details", fg="red")
 
     
     def delete(self):
@@ -352,6 +368,24 @@ class Manage(Admin):
             elif user_details[0] == 'GP':
                 cursor.execute("UPDATE GPs SET active = ? WHERE gpid = ?", ('no', user_details[1]))
                 self.lbl_text.config(text="GP account deactivate", fg="red")
+                conn.commit()
+                cursor.close()
+                conn.close()
+            else:
+                self.lbl_text.config(text="Error deactivating user", fg="red")
+                
+    def reactivate(self):
+        user_details = self.get_input()
+        if len(user_details) == 2:
+            if user_details[0] == 'Patient':
+                cursor.execute("UPDATE Patients SET active = ? WHERE patientid = ?", ('yes', user_details[1]))
+                self.lbl_text.config(text="Patient account reactivated", fg="blue")
+                conn.commit()
+                cursor.close()
+                conn.close()
+            elif user_details[0] == 'GP':
+                cursor.execute("UPDATE GPs SET active = ? WHERE gpid = ?", ('yes', user_details[1]))
+                self.lbl_text.config(text="GP account reactivated", fg="blue")
                 conn.commit()
                 cursor.close()
                 conn.close()

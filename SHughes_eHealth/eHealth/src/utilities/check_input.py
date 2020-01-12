@@ -40,13 +40,12 @@ def email_format(email):
         return 'not correct'
     
 def email_unique(cursor, user_type, email):
-    """ function checks that email is unique with the eHealth database as it is used for login.
+    """ function checks that email is unique within the eHealth database as it is used for login.
         param: cursor - global variable created when call function to connect to database
         param: user_type, email """
     if user_type == 'GP':
         cursor.execute('SELECT * from GPs WHERE email = ?', (email,))
         gp_email = cursor.fetchall()
-        print(gp_email)
         if gp_email != []:
             return 'exists'
         else:

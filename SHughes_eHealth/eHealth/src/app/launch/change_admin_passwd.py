@@ -8,7 +8,6 @@ import inspect
 import re
 import hashlib
 import binascii
-import logging
 
 import sqlite3
 from sqlite3 import Error
@@ -32,14 +31,13 @@ path.delete_dir()
 
 #============================CHANGE ADMIN PASSWORD interface======================
 
-log_file = path.dataDir_path('eHealth_output.log', 3)
-logging.basicConfig(level=logging.DEBUG,
-                    filename=log_file,
-                    filemode ='a',
-                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
-
 
 class Change_admin_passwd(tk.Frame):
+    """ Interface opens every time Admin logs in with default password (admin).
+        Options:
+        1. Change password to one that meets requirements for strong password
+        2. Continue using default password (admin) - useful for initial set up"""
+    
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
         
@@ -58,15 +56,15 @@ class Change_admin_passwd(tk.Frame):
         self.lbl_title = tk.Label(self.Top, text = "Change Admin default password", font=('arial', 15))
         self.lbl_title.pack(fill=tk.X)
         self.lbl_admin = tk.Label(self.Form, text = "Username: admin", font=('arial', 14), bd=15)
-        self.lbl_admin.grid(row=0, sticky="e")
-        self.lbl_admin = tk.Label(self.Form, text = "Password requirements: ", font=('arial', 15), bd=14, fg='green')
-        self.lbl_admin.grid(row=1, sticky="e")
-        self.lbl_admin = tk.Label(self.Form, text = "At least 8 characters, A capital letter, one number, one special characrter ", font=('arial', 14), bd=15, fg='green')
-        self.lbl_admin.grid(row=2, sticky="e")
+        self.lbl_admin.grid(row=0, sticky="w")
+        self.lbl_require1 = tk.Label(self.Form, text = "Password requirements: ", font=('arial', 15), bd=14, fg='green')
+        self.lbl_require1.grid(row=1, sticky="w")
+        self.lbl_require2 = tk.Label(self.Form, text = "At least 8 characters, A capital letter, one number, one special characrter ", font=('arial', 14), bd=15, fg='green')
+        self.lbl_require2.grid(row=2, sticky="w")
         self.lbl_password1 = tk.Label(self.Form, text = "Password:", font=('arial', 14), bd=15)
-        self.lbl_password1.grid(row=3, sticky="e")
+        self.lbl_password1.grid(row=3, sticky="w")
         self.lbl_password2 = tk.Label(self.Form, text = "Re-enter Password:", font=('arial', 14), bd=15)
-        self.lbl_password2.grid(row=4, sticky="e")
+        self.lbl_password2.grid(row=4, sticky="w")
         self.lbl_text = tk.Label(self.Form)
         self.lbl_text.grid(row=5, columnspan=2)
         self.lbl_create = tk.Label(self.Form, text = "If you want to keep the default password, click No.")
@@ -79,10 +77,10 @@ class Change_admin_passwd(tk.Frame):
         self.password2.grid(row=4, column=1)
 
         #==============================BUTTON WIDGETS=================================
-        self.btn_login = tk.Button(self.Form, text="Yes", width=45, command=self.change_passwd)
+        self.btn_login = tk.Button(self.Form, text="Change Password", width=45, command=self.change_passwd, fg='blue')
         self.btn_login.grid(pady=25, row=6, columnspan=2)
         self.btn_login.bind('<Return>', self.change_passwd)
-        self.btn_create = tk.Button(self.Form, text="No", width=45, command=self.no)
+        self.btn_create = tk.Button(self.Form, text="No", width=45, command=self.no, fg='red')
         self.btn_create.grid(pady=25, row=8, columnspan=2)
         
         #==============================METHODS=================================
@@ -109,9 +107,7 @@ class Change_admin_passwd(tk.Frame):
         else:
             self.connect_to_db()
             pwd = pwdu.hash_password(passwd1)
-            print(pwd)
             cursor.execute(' UPDATE Admin SET passwd = ? WHERE administrator = "admin" ', (pwd,))
-            logging.info('Admin password changed from default')
             conn.commit()
             cursor.close()
             conn.close()
@@ -122,7 +118,6 @@ class Change_admin_passwd(tk.Frame):
     
     def no(self):
         self.Admin_Window()
-        logging.info('Admin logged in without changing password')
         print('Admin logged in without changing password')
         self.destroy()
         
