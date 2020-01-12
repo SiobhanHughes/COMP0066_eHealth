@@ -8,7 +8,7 @@
  - Root folder
  - eHealth directory (application containing all packages, modules, data, GUI, tests)
  - README.md, requirements.txt, setup.py
- 7. eHealth: The application - src, data (store the database - eHealth.db), tests (PyTest), __main__.py
+ 7. eHealth: The application - src, data (store the database - eHealth.db), __main__.py
  8. src: all packages and modules to run the application (found in app directory) incliding GUI modules 
  (GUI directory) and database utility modules (database directory).
  
