@@ -458,12 +458,10 @@ class MainView(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
         
-        Top = tk.Frame(bd=2,  relief=tk.RIDGE)
-        Top.pack(side=tk.TOP, fill=tk.X)
-        lbl_title = tk.Label(Top, text = "Admin: eHealth", font=('arial', 15))
+        lbl_title = tk.Label(self, text = "Admin: eHealth system", font=('arial', 15))
         lbl_title.pack(fill=tk.X)
         
-        buttonframe = tk.Frame(self, Top)
+        buttonframe = tk.Frame(self)
         container = tk.Frame(self)
         buttonframe.pack(side="top", fill="x", expand=False)
         container.pack(side="top", fill="both", expand=True)

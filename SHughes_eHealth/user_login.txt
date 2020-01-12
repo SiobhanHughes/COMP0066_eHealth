@@ -1,10 +1,44 @@
-User emails and login:
-
-
+FOR DEMO - autopopulated example database
 
 Test email for this coursework:
 Gmail for eHealth Management - test email feature:
 COMP0066eHealth@gmail.com
 Password: eHealthtest
 
-Comp0066!!
+
+
+USER EMAIL/PASSWORD LOGIN (for purposes of demo)
+
+Admin login (changed from default(admin)):
+password: Admin66$
+
+Patients login:
+
+1.
+email: nhughes@gmail.com
+password: NHughes81!
+
+2.
+email: nsmith@gmail.com
+password: NSmith21&
+
+3.
+email: njones@gmail.com
+password: Not created (NULL in database) - can use to create new account
+
+4.
+email: COMP0066eHealth@gmail.com
+password: Comp0066!!
+
+
+
+GPs login:
+
+1.
+email: jane_allen@gmail.com
+password: JaneAllen81!
+
+2.
+email: theresa_chng@gmail.com
+password: Not created (NULL in database) - can use to create new account
+
