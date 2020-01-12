@@ -220,7 +220,7 @@ class Appointments(GP):
            else:
                date_range = check.gen_dates(start, end)
                for d in date_range:
-                   cursor.execute('SELECT date(date_time) FROM Appointments WHERE date(date_time) = ?', (d,))
+                   cursor.execute('SELECT date(date_time) FROM Appointments WHERE date(date_time) = ? AND gpid =?', (d, self.user['gpid']))
                    row = cursor.fetchall()
                    if row != []:
                        self.lbl_text.config(text="Error: You already added availability for some of these dates", fg="red")

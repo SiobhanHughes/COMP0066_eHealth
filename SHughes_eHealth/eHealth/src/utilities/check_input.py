@@ -196,7 +196,7 @@ def gen_appointments(one_date, time_ranges):
     appointments = []
     for key, value in datetime_ranges.items():
         next = value[0]
-        while next <= value[1]:
+        while next < value[1]:
             appointments.append(next)
             next += dt.timedelta(minutes=15)
     return appointments
