@@ -271,7 +271,7 @@ def search_patient_fullname(conn, fullname):
     :params patient full name:
     return patient information
     """
-    sql = ''' SELECT fname, lname, email, street, city, postcode, tel, DOB, NHSno, street, city, postcode, tel, active
+    sql = ''' SELECT p.patientid, fname, lname, email, DOB, NHSno, street, city, postcode, tel, active
               FROM Patients p, Patient_Record pr
               WHERE p.patientid = pr.patientid
               AND fname = ?

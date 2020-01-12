@@ -374,13 +374,13 @@ class Manage(Admin):
         if len(user_details) == 2:
             if user_details[0] == 'Patient':
                 cursor.execute("UPDATE Patients SET active = ? WHERE patientid = ?", ('no', user_details[1]))
-                self.lbl_text.config(text="Patient account deactivate", fg="red")
+                self.lbl_text.config(text="Patient account deactivated", fg="red")
                 conn.commit()
                 cursor.close()
                 conn.close()
             elif user_details[0] == 'GP':
                 cursor.execute("UPDATE GPs SET active = ? WHERE gpid = ?", ('no', user_details[1]))
-                self.lbl_text.config(text="GP account deactivate", fg="red")
+                self.lbl_text.config(text="GP account deactivated", fg="red")
                 conn.commit()
                 cursor.close()
                 conn.close()
@@ -403,7 +403,7 @@ class Manage(Admin):
                 cursor.close()
                 conn.close()
             else:
-                self.lbl_text.config(text="Error deactivating user", fg="red")
+                self.lbl_text.config(text="Error reactivating user", fg="red")
 
 class Add(Admin):
    def __init__(self, *args, **kwargs):
