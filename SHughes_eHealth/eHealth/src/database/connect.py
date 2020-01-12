@@ -7,6 +7,7 @@ import os
 import sys
 import inspect
 import pkgutil
+
 import get_path_utilities as get_path
 
 #get the absolute file path to the eHealth database - used to pass the database file to create_connection

@@ -6,6 +6,7 @@
 #============================IMPORT============================================
 
 import tkinter as tk
+from tkinter import scrolledtext
 
 import os
 import sys
@@ -13,15 +14,15 @@ import inspect
 import re
 import hashlib
 import binascii
-import logging
+import smtplib
+import ssl
+import re
 
 import sqlite3
 from sqlite3 import Error
 
-import create_account
-import open_home
-import change_admin_passwd
-import passwd_utilities as pwdu
+import datetime as dt
+from dateutil.relativedelta import relativedelta
 
 # get file path for eHealth directory and add it to sys.path 
 # import my modules
@@ -33,20 +34,27 @@ path.insert_dir(eHealth_dir)
 from src.database import db_utilities as dbu
 from src.database import connect
 from src.utilities import track_user as track
+from src.utilities import check_input as check
+from src.utilities import email
 from src.app.Admin import admin_home
 from src.app.GP import gp_home
 from src.app.GP import add_availability
+from src.app.GP import add_medical
+from src.app.GP import add_prescription
+from src.app.GP import add_vaccine
 from src.app.Patient import patient_home
+from src.app.launch import create_account
+from src.app.launch import open_home
+from src.app.launch import change_admin_passwd
+from src.app.launch import passwd_utilities as pwdu
+from src.app.GUI import outter_scroll_frame
+from src.app.GUI import search_results_window
+from src.app.GUI import user_info
+from src.app.GUI import view_records
 path.delete_dir()
 
 
 #============================Interface for LOGIN to open main/root window======================
-
-log_file = path.dataDir_path('eHealth_output.log', 3)
-logging.basicConfig(level=logging.DEBUG,
-                    filename=log_file,
-                    filemode ='a',
-                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
 
 class Login(tk.Frame):
     
@@ -130,7 +138,6 @@ class Login(tk.Frame):
             user = {'type': 'admin'}
             print(user)
             track.store(user, 3) #admin is logged in (track) - ask to change default password
-            logging.info('admin logged in using default password. Asked to change password.')
             self.lbl_text.config(text="")
             self.admin_passwd() #open window - Change default admim password
             self.EMAIL.set("")
@@ -141,7 +148,6 @@ class Login(tk.Frame):
                 user = {'type': 'admin'}
                 print(user)
                 track.store(user, 3) #admin is logged in (track)
-                logging.info('admin logged in.')
                 self.lbl_text.config(text="")
                 self.EMAIL.set("")
                 self.PASSWORD.set("") 
@@ -185,7 +191,6 @@ class Login(tk.Frame):
                 user = {'type': 'gp', 'gpid': gp_login[0], 'fname': gp_login[1], 'lname': gp_login[2], 'email': gp_login[3]}
                 print(user)
                 track.store(user, 3) #gp is logged in (track)
-                logging.info('GP logged in.')
                 self.lbl_text.config(text="")
                 self.EMAIL.set("")
                 self.PASSWORD.set("") 
@@ -202,7 +207,6 @@ class Login(tk.Frame):
                         'email': patient_login[3], 'NHSno': patient_login[5]}
                 print(user)
                 track.store(user, 3) #patient is logged in (track)
-                logging.info('Patient logged in.')
                 self.lbl_text.config(text="")
                 self.EMAIL.set("")
                 self.PASSWORD.set("") 
@@ -270,7 +274,6 @@ class Login(tk.Frame):
     def shutdown(self):
         path.delete_from_dataDir('user.pickle', 3) #deleting user.pickle indicates no user is logged in and frees the application for another user to log in
         #if user.pickle file exists (user forgot to log out), it is deleted when application shuts down
-        logging.info('Application closed')
         print('Application closed')
 
 
@@ -293,36 +296,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
-    # db_file = connect.db_path(3)
-    # conn = connect.create_connection(db_file)
-    # cursor = conn.cursor()
-    # email1 = 'jane_allen@gmail.com'
-    # print(email1)
-    # sql1 = Login.gp_login_query()
-    # print(sql1)
-    # cursor.execute(sql1, (email1,))
-    # gp_login = cursor.fetchone()
-    # print(gp_login)
-    # email2 = 'nhughes@gmail.com'
-    # sql2 = Login.patient_login_query(email2)
-    #cursor.execute(sql2)
-    #patient_login = cursor.fetchone()
-    #print(patient_login)
-    
-    
-    # db_file = connect.db_path(3)
-    # conn = connect.create_connection(db_file)
-    # print(db_file)
-    # print(conn)
-    # print("sqlite version", sqlite3.sqlite_version)
-    # if conn is not None:
-    #     print("connected")  
-    # conn.close()
-
-    # emp = {1:"A",2:"B",3:"C",4:"D",5:"E"}
-    # track.store(emp, 3)
-    # emp = track.load(emp, 3)
-    # print(emp)
-    # path.delete_from_dataDir("user.pickle", 3)
-    

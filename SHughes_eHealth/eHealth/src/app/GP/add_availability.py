@@ -10,8 +10,6 @@ import os
 import sys
 import inspect
 
-import logging
-
 import sqlite3
 from sqlite3 import Error
 

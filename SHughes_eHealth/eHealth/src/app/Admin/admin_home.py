@@ -9,8 +9,6 @@ import os
 import sys
 import inspect
 
-import logging
-
 import sqlite3
 from sqlite3 import Error
 
@@ -34,13 +32,6 @@ path.delete_dir()
 
 
 #============================ADMIN HOME interface======================
-
-log_file = path.dataDir_path('eHealth_output.log', 3)
-logging.basicConfig(level=logging.DEBUG,
-                    filename=log_file,
-                    filemode ='a',
-                    format='%(asctime)s - %(module)s - %(levelname)s - %(message)s')
-
 
 class Admin(tk.Frame):
     def __init__(self, *args, **kwargs):
@@ -455,9 +446,7 @@ class MainView(tk.Frame):
     
     def logout(self):
         print('Admin logged out. Widgets destroyed')
-        logging.info('Admin logged out. Widgets destroyed')
         path.delete_from_dataDir('user.pickle', 3) #deleting user.pickle indicates no user is logged in and frees the application for another user to log in
-        logging.info('user.pickle deleted - new user can log in')
         self.destroy()
 
 def close(*args):

@@ -3,7 +3,17 @@
 
 import sqlite3
 from sqlite3 import Error
-import connect
+
+# get file path for eHealth directory and add it to sys.path 
+# import my modules
+# delete file path for eHealth directory from sys.path
+import get_path_utilities as path
+current = path.get_current_dir()
+eHealth_dir = path.getDir(current, 2)
+path.insert_dir(eHealth_dir)
+from src.database import db_utilities as dbu
+from src.database import connect
+path.delete_dir()
 
 
 def create_table(conn, create_table_sql):

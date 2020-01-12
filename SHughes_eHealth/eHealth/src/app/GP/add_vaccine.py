@@ -1,5 +1,5 @@
 import tkinter as tk
-import tkinter.scrolledtext as scrolledtext
+from tkinter import scrolledtext
 
 import os
 import sys

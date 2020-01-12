@@ -1,6 +1,6 @@
-# How to create functions to manipulate sqlite tables taken from: 
+# How to create functions to manipulate sqlite tables/queries taken from: 
 # https://www.sqlitetutorial.net/sqlite-python/insert/
-#https://www.sqlitetutorial.net/sqlite-python/update/
+# https://www.sqlitetutorial.net/sqlite-python/update/
 
 import sqlite3
 from sqlite3 import Error

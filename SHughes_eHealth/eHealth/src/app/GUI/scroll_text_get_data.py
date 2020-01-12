@@ -1,7 +1,9 @@
 #Learnt how to use scrolled text box from:
 #https://stackoverflow.com/questions/53937400/how-to-get-the-text-out-of-a-scrolledtext-widget
 
-import tkinter, sys
+import tkinter
+import sys
+
 from tkinter import scrolledtext
 
 root = tkinter.Tk()

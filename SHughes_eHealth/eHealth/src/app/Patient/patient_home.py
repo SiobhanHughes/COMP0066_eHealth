@@ -4,6 +4,7 @@
 #============================IMPORT============================================
 
 import tkinter as tk
+from tkinter import scrolledtext
 
 import os
 import sys
