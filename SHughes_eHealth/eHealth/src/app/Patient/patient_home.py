@@ -80,9 +80,12 @@ class Cancel(Patient):
        titles = ['Appointment date', 'Appointment time', 'GP first name', 'GP last name', 'Cancel']
        self.connect_to_db()
        pid = self.user['patientid']
+       today = dt.date.today()
        sql = '''SELECT date(date_time), time(date_time), g.fname, g.lname, appointmentid
-                FROM Appointments a, GPs g WHERE a.gpid = g.gpid AND available = 'no' AND patientid = ?'''
-       cursor.execute(sql, (pid,))
+                FROM Appointments a, GPs g WHERE a.gpid = g.gpid AND available = 'no' AND patientid = ?
+                AND date(date_time) >= ?
+                ORDER BY date(date_time)'''
+       cursor.execute(sql, (pid, today))
        rows = cursor.fetchall()
        if rows != []:
             self.apppointment_search_result(titles, rows)
@@ -233,4 +236,3 @@ if __name__ == "__main__":
     root.wm_geometry("900x900")
     main.bind('<Destroy>', close)
     root.mainloop()
-    
